@@ -1,0 +1,6 @@
+pymodm
+flask
+pytest
+requests
+pytest-pep8
+scikit-image
