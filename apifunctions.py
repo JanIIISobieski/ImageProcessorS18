@@ -2,8 +2,14 @@ import models
 import datetime
 
 
-# update existing user's metrics
 def existing_user_metrics(email, functions):
+    """
+    Update user metrics with new function calls for existing user
+    :param email: email input from user (string)
+    :param functions: image processing functions chosen by user (array)
+    :return: save updated user metrics (array) and current time (datetime
+    object) in existing database user object
+    """
     u = models.User.objects.raw({"_id": email}).first()
     for i, n in enumerate(u.metrics):
         u.metrics[n] = u.metrics[n] + functions[n]
@@ -11,13 +17,41 @@ def existing_user_metrics(email, functions):
     u.save()
 
 
-# create new user
 def new_user_metrics(email, functions):
+    """
+    Store initial user metrics for new user
+    :param email: email input from user (string)
+    :param functions: image processing functions chosen by user (array)
+    :return: save new user (string) with initial function metrics (array) and
+    current time (datetime object) in database user object
+    """
     u = models.User(email, functions, datetime.datetime.now())
+    u.save()
+
+
+def get_user_metrics(email):
+    """
+    Get user metrics for a given email
+    :param email: email input from user (string)
+    :return: array of function metrics for that user (array) and last time
+    array was updated (datetime object)
+    """
+    u = models.User.objects.raw({"_id": email}).first()
+    return [u.metrics, u.time]
 
 
 # store originals, functions, up_time in db
 def store_uploads(email, originals, up_time, functions):
+    """
+    Store functions and paths to original images in database image batch
+    :param email: email input from user (string)
+    :param originals: original images encoded in base64 (array)
+    :param up_time: time at which original images were uploaded (datetime
+    object)
+    :param functions: image processing functions chosen by user (array)
+    :return: save array of paths to local image directories in database image
+    batch object
+    """
     b = models.ImageBatch(email)
     b.o_image = originals
     b.up_time = up_time
@@ -26,13 +60,37 @@ def store_uploads(email, originals, up_time, functions):
 
 
 # store processed, histograms, sizes, rettime in db
-def store_returns(email, processed, o_histogram, p_histogram, o_size, p_size):
-    a = models.ImageBatch.objects.get({"_id": email}).order_by('descending')
-    b = a.first()
+def store_returns(email, processed, o_histogram, p_histogram, o_size, p_size,
+                  ret_time):
+    """
+    Store paths to processed image paths, image metrics, and post-processing
+    time in existing database image batch
+    :param email: email input from user (string)
+    :param processed: processed images encoded in base64 (array)
+    :param o_histogram: histograms of original images (array of arrays)
+    :param p_histogram: histograms of processed images (array of arrays)
+    :param o_size: sizes of original images (array)
+    :param p_size: sizes of processed images (array)
+    :param ret_time: post-processing time (datetime object)
+    :return: save array of paths to local image directories and associated
+    image metrics in image batch object in database
+    """
+    b = get_latest_batch(email)
     b.p_image = processed
     b.o_hist = o_histogram
     b.p_hist = p_histogram
     b.o_size = o_size
     b.p_size = p_size
-    b.ret_time = datetime.datetime.now()
+    b.ret_time = ret_time
     b.save()
+
+
+def get_latest_batch(email):
+    """
+    Get the most recent image batch in database for a given user
+    :param email: email input from user (string)
+    :return: image batch object from database
+    """
+    a = models.ImageBatch.objects.get({"_id": email}).order_by('descending')
+    b = a.first()
+    return b
