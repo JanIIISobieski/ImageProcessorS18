@@ -44,8 +44,8 @@ def main_task():
             o_histogram = []
             p_histogram = []
             for i,n in enumerate(originals):
-                # [processed[n], o_size[n], o_histogram[n], p_histogram[n]] = \
-                #    IP_Functions.run_process(i, functions)
+                [processed[n], o_size[n], o_histogram[n], p_histogram[n]] = \
+                    IP_Functions.run_process(i, functions)
             ret_time = datetime.datetime.now()
 
             batch = []
