@@ -35,6 +35,7 @@ def main_task():
     functions = s["functions"]
     try:
         originals = s["originals"]  # get image files
+        logging.debug('got image')
         up_time = datetime.datetime.now()
         # verify that images are encoded in base64
 
@@ -43,9 +44,11 @@ def main_task():
             o_size = []
             o_histogram = []
             p_histogram = []
+            logging.debug('about to execute processing function')
             for i,n in enumerate(originals):
                 [processed[n], o_size[n], o_histogram[n], p_histogram[n]] = \
                     IP_Functions.run_process(i, functions)
+            logging.debug('executed processing function')
             ret_time = datetime.datetime.now()
 
             batch = []
