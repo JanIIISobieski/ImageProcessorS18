@@ -3,10 +3,10 @@ import models
 import datetime
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-import decodeimage
+# import decodeimage
 import logging
 import apifunctions as api
-import datetime
+import IP_Functions
 
 
 connect("mongodb://vcm-3483.vm.duke.edu:27017/image_app")
@@ -39,12 +39,13 @@ def main_task():
         # verify that images are encoded in base64
 
         try:
+            processed = []
+            o_size = []
+            o_histogram = []
+            p_histogram = []
             for i,n in enumerate(originals):
-                processed = process_image(i, functions)
-                o_histogram = histogram(i)
-                p_histogram = histogram(processed)
-                o_size = get_size(i)
-                p_size = get_size(processed)
+                # [processed[n], o_size[n], o_histogram[n], p_histogram[n]] = \
+                #    IP_Functions.run_process(i, functions)
             ret_time = datetime.datetime.now()
 
             batch = []
@@ -55,7 +56,6 @@ def main_task():
                 im["original_histogram"] = o_histogram[n]
                 im["processed_histogram"] = p_histogram[n]
                 im["original_size"] = o_size[n]
-                im["processed_size"] = p_size[n]
                 batch[n] = im
             try:
                 api.existing_user_metrics(email,
