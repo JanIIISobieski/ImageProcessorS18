@@ -33,6 +33,7 @@ def main_task():
     s = request.get_json()
     email = s["email"]
     functions = s["functions"]
+    logging.debug('got request')
     try:
         originals = s["originals"]  # get image files
         logging.debug('got image')
