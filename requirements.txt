@@ -4,3 +4,6 @@ pytest
 requests
 pytest-pep8
 scikit-image
+scipy
+numpy
+imageio
