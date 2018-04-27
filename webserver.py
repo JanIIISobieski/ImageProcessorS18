@@ -85,6 +85,9 @@ def main_task():
         except TypeError:
             logging.error('Could not process uploaded images')
             return "Processing of images failed", 422
+        except:
+            logging.error('Couldnt process')
+            return "Process failed", 422
     except TypeError:
         logging.error('Did not receive image encoded in base64')  # Image not
         # uploaded or image encoded incorrectly
