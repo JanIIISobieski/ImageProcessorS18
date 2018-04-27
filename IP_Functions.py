@@ -5,6 +5,9 @@ import base64
 import imageio
 import os
 import shutil
+import math
+from PIL import Image
+import matplotlib.pyplot as plt
 
 def histo_equal(image):
     """
@@ -15,6 +18,7 @@ def histo_equal(image):
     """
 
     image_he = exposure.equalize_hist(image)
+    image_he = image_he * (np.amax(image) - np.amin(image)) + np.amin(image)
 
     return image_he
 
@@ -26,8 +30,9 @@ def contrast_stretch(image):
     :return: A contrast stretched ndarray
     """
 
-    p2, p98 = np.percentile(image, (2, 98))
+    p2, p98 = np.percentile(image, (5, 95))
     image_cs = exposure.rescale_intensity(image, in_range=(p2, p98))
+    image_cs = image_cs * (np.amax(image) - np.amin(image)) + np.amin(image)
 
     return (image_cs)
 
@@ -39,7 +44,8 @@ def log_compression(image):
        :return: A log-compressed ndarray
        """
 
-    image_log = np.log(image)
+    c = 255 / math.log(1+np.amax(image))
+    image_log = c*np.log(image + 1)
 
     return(image_log)
 
@@ -50,8 +56,7 @@ def rev_vid(image):
        where each element corresponds to a pixel.
        :return: An ndarray that is the reverse video of input
        """
-
-    inverted = np.invert(image, dtype=float32)
+    inverted = 255 - image
 
     return(inverted)
 
@@ -77,7 +82,7 @@ def histo(image):
         of intensity ranges.
        """
 
-    histogram = np.histogram(image, bins=100, density=True)
+    histogram = np.histogram(image, bins='auto', density=True)
 
     return (histogram)
 
@@ -152,6 +157,7 @@ def run_process(image_string, filters):
     except TypeError:
         print('Image file expected')
 
+
     misc.imsave('prefilt.jpg', im_array)
     image_prefilt_string = encode_image_string('prefilt.jpg')
     os.remove('prefilt.jpg')
@@ -180,7 +186,7 @@ def run_process(image_string, filters):
 
 def main():
     imstring = encode_image_string("lion.jpg")
-    run_process(imstring, [1,1,1,1])
+    run_process(imstring, [1,0,0,0])
 
 if __name__ == "__main__":
     main()

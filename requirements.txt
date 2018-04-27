@@ -7,3 +7,5 @@ scikit-image
 scipy
 numpy
 imageio
+pillow==5.0
+matplotlib
