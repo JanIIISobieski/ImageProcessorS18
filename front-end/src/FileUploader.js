@@ -7,20 +7,41 @@ class FileUploader extends React.Component {
         this.state = {
             accepted: [],
             rejected: [],
-            image_string: ''
+            current_image_string: '',
+            all_image_array: [],
         }
     }
+
+    onDropWhat = (acceptedImages, rejectedImages) => {
+        this.setState({accepted: acceptedImages});
+        this.setState({rejected: rejectedImages});
+        acceptedImages.forEach(file => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onloadend = () => {
+                //console.log(reader.result);
+                var readImage = reader.result;
+                this.setState({current_image_string: readImage});
+                var joined = this.state.all_image_array.concat([readImage]);
+                this.setState({all_image_array: joined});
+            };
+        });
+        console.log({'accepted': this.state.accepted});
+        console.log({'rejected': this.state.rejected});
+        console.log({'current_image_string': this.state.current_image_string});
+        console.log({'all_images': this.state.all_image_array});
+    };
 
     render() {
         return (
             <section>
+                <p>Try dropping some files here, or click to select files to upload.</p>
+                <p>Only *.jpeg and *.png images will be accepted</p>
                 <div className="dropzone">
                     <Dropzone
                         accept="image/jpeg, image/png"
-                        onDrop={(accepted, rejected) => { this.setState({ accepted, rejected }); }}
+                        onDrop= {this.onDropWhat}
                     >
-                        <p>Try dropping some files here, or click to select files to upload.</p>
-                        <p>Only *.jpeg and *.png images will be accepted</p>
                     </Dropzone>
                 </div>
                 <aside>
@@ -37,6 +58,7 @@ class FileUploader extends React.Component {
                         }
                     </ul>
                 </aside>
+                <img src={this.state.current_image_string} width='500'/>
             </section>
         );
     }
