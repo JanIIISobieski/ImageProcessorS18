@@ -1,5 +1,14 @@
 import React from 'react';
 import Dropzone from 'react-dropzone'
+import PropTypes from 'prop-types'
+import { withStyles } from 'material-ui/styles'
+import Button from 'material-ui/Button'
+
+const styles = theme => ({
+    button: {
+        margin: theme.spacing.unit,
+    },
+});
 
 class FileUploader extends React.Component {
     constructor() {
@@ -9,12 +18,15 @@ class FileUploader extends React.Component {
             rejected: [],
             current_image_string: '',
             all_image_array: [],
+            length_array: 0,
+            image_select: 0
         }
     }
 
-    onDropWhat = (acceptedImages, rejectedImages) => {
+    onDropSetter = (acceptedImages, rejectedImages) => {
         this.setState({accepted: acceptedImages});
         this.setState({rejected: rejectedImages});
+        this.setState({all_image_array: []});
         acceptedImages.forEach(file => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -25,11 +37,23 @@ class FileUploader extends React.Component {
                 var joined = this.state.all_image_array.concat([readImage]);
                 this.setState({all_image_array: joined});
             };
+            this.setState({length_array: this.state.all_image_array.length});
         });
         console.log({'accepted': this.state.accepted});
         console.log({'rejected': this.state.rejected});
         console.log({'current_image_string': this.state.current_image_string});
         console.log({'all_images': this.state.all_image_array});
+        console.log({'length_array': this.state.length_array});
+    };
+
+    onRightButtonClick = (event) => {
+        this.setState({image_select: (this.state.image_select + 1) % this.state.length_array});
+        console.log({'image_select': this.state.image_select});
+    };
+
+    onLeftButtonClick = (event) => {
+        this.setState({image_select: (this.state.image_select - 1) % this.state.length_array});
+        console.log({'image_select': this.state.image_select});
     };
 
     render() {
@@ -40,7 +64,7 @@ class FileUploader extends React.Component {
                 <div className="dropzone">
                     <Dropzone
                         accept="image/jpeg, image/png"
-                        onDrop= {this.onDropWhat}
+                        onDrop= {this.onDropSetter}
                     >
                     </Dropzone>
                 </div>
@@ -58,10 +82,21 @@ class FileUploader extends React.Component {
                         }
                     </ul>
                 </aside>
-                <img src={this.state.current_image_string} width='500'/>
+                <div>
+                    <Button color="primary" variant='raised' onClick={this.onLeftButtonClick}>
+                        Previous Image
+                    </Button>
+
+                    {this.state.image_select + 1} out of {this.state.length_array}
+
+                    <Button color="primary" variant='raised' onClick={this.onRightButtonClick}>
+                        Next Image
+                    </Button>
+                </div>
+                <img src={this.state.all_image_array[this.state.image_select]} width='500'/>
             </section>
         );
     }
 }
 
-export default FileUploader;
+export default withStyles(styles)(FileUploader);
