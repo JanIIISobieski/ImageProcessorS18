@@ -16,7 +16,6 @@ class FileUploader extends React.Component {
         this.state = {
             accepted: [],
             rejected: [],
-            current_image_string: '',
             all_image_array: [],
             length_array: 0,
             image_select: 0
@@ -24,36 +23,43 @@ class FileUploader extends React.Component {
     }
 
     onDropSetter = (acceptedImages, rejectedImages) => {
-        this.setState({accepted: acceptedImages});
-        this.setState({rejected: rejectedImages});
+        this.setState({accepted: acceptedImages}, () => {console.log({'accepted': this.state.accepted})});
+        this.setState({rejected: rejectedImages}, () => {console.log({'rejected': this.state.rejected})});
         this.setState({all_image_array: []});
+        this.setState({image_select: 0});
         acceptedImages.forEach(file => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onloadend = () => {
                 //console.log(reader.result);
                 var readImage = reader.result;
-                this.setState({current_image_string: readImage});
                 var joined = this.state.all_image_array.concat([readImage]);
-                this.setState({all_image_array: joined});
+                this.setState({all_image_array: joined},
+                    () => {
+                    this.setState({length_array: this.state.all_image_array.length},
+                        () => {console.log({'length_array': this.state.length_array})});
+                    console.log({'all_images': this.state.all_image_array});
+                });
             };
-            this.setState({length_array: this.state.all_image_array.length});
         });
-        console.log({'accepted': this.state.accepted});
-        console.log({'rejected': this.state.rejected});
-        console.log({'current_image_string': this.state.current_image_string});
-        console.log({'all_images': this.state.all_image_array});
-        console.log({'length_array': this.state.length_array});
+    };
+
+    nonZeroDecrement = (val, vec_length) => {
+        var decrement = val - 1;
+        if (decrement === -1){
+            decrement = decrement + vec_length
+        }
+        return decrement
+    }
+
+    onLeftButtonClick = (event) => {
+        this.setState({image_select: Math.abs(this.nonZeroDecrement(this.state.image_select, this.state.length_array)) % this.state.length_array},
+            () => console.log({'image_select': this.state.image_select}));
     };
 
     onRightButtonClick = (event) => {
-        this.setState({image_select: (this.state.image_select + 1) % this.state.length_array});
-        console.log({'image_select': this.state.image_select});
-    };
-
-    onLeftButtonClick = (event) => {
-        this.setState({image_select: (this.state.image_select - 1) % this.state.length_array});
-        console.log({'image_select': this.state.image_select});
+        this.setState({image_select: Math.abs(this.state.image_select + 1) % this.state.length_array},
+            () => console.log({'image_select': this.state.image_select}));
     };
 
     render() {
@@ -87,7 +93,7 @@ class FileUploader extends React.Component {
                         Previous Image
                     </Button>
 
-                    {this.state.image_select + 1} out of {this.state.length_array}
+                    {(this.state.image_select + 1)*(this.state.length_array > 0)} out of {this.state.length_array}
 
                     <Button color="primary" variant='raised' onClick={this.onRightButtonClick}>
                         Next Image

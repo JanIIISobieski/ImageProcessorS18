@@ -30,14 +30,13 @@ class AppHeader extends React.Component{
     }
 
     onTextFieldChange = (event) => {
-        this.setState({'userID': event.target.value});
-        console.log({'UserID': this.state.userID})
+        this.setState({'userID': event.target.value}, () => console.log({'UserID': this.state.userID}));
     };
 
     validateEmail = (email) => {
         var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         var testVal = !re.test(String(email).toLowerCase());
-        console.log({emailRegEx: testVal});
+        console.log({badEmail: testVal});
         return testVal
     };
 
