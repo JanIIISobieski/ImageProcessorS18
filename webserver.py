@@ -33,10 +33,10 @@ def main_task():
     s = request.get_json()
     email = s["email"]
     functions = s["functions"]
-    logging.debug('got request')
+    app.logger.debug('got request')
     try:
         originals = s["originals"]  # get image files
-        logging.debug('got image')
+        app.logger.debug('got image')
         up_time = datetime.datetime.now()
         # verify that images are encoded in base64
 
@@ -45,13 +45,13 @@ def main_task():
             o_size = []
             o_histogram = []
             p_histogram = []
-            logging.debug('about to execute processing function')
+            app.logger.debug('about to execute processing function')
             # for i,n in enumerate(originals):
             #     [processed[n], o_size[n], o_histogram[n], p_histogram[n]] = \
             #         IP_Functions.run_process(i, functions)
             [processed, orig, o_size, o_histogram, p_histogram] = \
                 IP_Functions.run_process(originals, functions)
-            logging.debug('executed processing function')
+            app.logger.debug('executed processing function')
             ret_time = datetime.datetime.now()
 
             batch = []
@@ -76,26 +76,26 @@ def main_task():
                 api.store_uploads(email, originals, up_time,
                                   functions)
             except errors.OperationError:
-                logging.error('Could not store original images in database')
+                app.logger.error('Could not store original images in database')
                 return "Database is down", 503
             try:
                 api.store_returns(email, processed, o_histogram, p_histogram,
                                   o_size, p_size, ret_time)  # store processed
                 # images and data in database
             except errors.OperationError:
-                logging.error('Could not store processed images in database')
+                app.logger.error('Could not store processed images in database')
                 return "Database is down", 503
             return jsonify(batch=batch, up_time=up_time, ret_time=ret_time,
                            functions=functions,
                            user_metrics=api.get_user_metrics(email))
         except TypeError:
-            logging.error('Could not process uploaded images')
+            app.logger.error('Could not process uploaded images')
             return "Processing of images failed", 422
         except:
-            logging.error('Couldnt process')
+            app.logger.error('Couldnt process')
             return "Process failed", 422
     except TypeError:
-        logging.error('Did not receive image encoded in base64')  # Image not
+        app.logger.error('Did not receive image encoded in base64')  # Image not
         # uploaded or image encoded incorrectly
         return "Images in wrong format", 415
 
