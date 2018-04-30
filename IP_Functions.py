@@ -90,7 +90,7 @@ def histo(image):
 def encode_image_string(filename):
     """
     Returns the base64 encoded string for an image file
-    :param filename: Name of image file to base64 encode
+    :param filename: image file to base64 encode
     :return: base64 string for image
     """
     with open(filename, "rb") as image_file:
@@ -100,7 +100,7 @@ def encode_image_string(filename):
 def decode_image_string(image_string):
     """
     Creates a png image file of base64 encoded string
-    :param image_string: base64 encoded string for image
+    :param image_string: base64 encoded string of image
     :return: Creates a png image file of encoded string
     """
     imgdata = base64.b64decode(image_string)
@@ -111,8 +111,20 @@ def decode_image_string(image_string):
 
 
 def resave_image(image_strings, ftype):
+    
+    """
+    Returns a base64 encoding of a zipfile that contains
+     images saved as a specified file type
+    :param image_strings: An array of base64 encoded image strings
+    :param ftype: A string that specifies what filetype the user wants
+     the files saved as (jpg, tiff, png...)
+    :return: base64 encoded zip archive of images
+    """
 
-    os.makedirs("/tmp")
+    if os.path.exists("tmp1"):
+        shutil.rmtree("tmp1")
+
+    os.makedirs("tmp1")
     i = 0
     for x in image_strings:
         try:
@@ -120,15 +132,21 @@ def resave_image(image_strings, ftype):
         except TypeError:
             print('base64 string expected')
 
-        imageio.imwrite('/tmp/temp'+str(i)+'.'+ftype, image)
+        shutil.move("image.png", "tmp1/image"+str(i)+".png")
         i = i + 1
 
-    shutil.make_archive("zipped_"+ftype+"_images", 'zip', "/tmp")
+    if os.path.exists("zipped_"+ftype+"_images.zip"):
+        os.remove("zipped_"+ftype+"_images.zip")
+    shutil.make_archive("zipped_"+ftype+"_images", 'zip', "tmp1")
 
-    with open("zipped_"+ftype+"_images.zip", 'rb') as fin, open("zipped_"+ftype+"_images.zip.b64", 'w') as fout:
-        base64.encode(fin, fout)
+    with open("zipped_"+ftype+"_images.zip", 'rb') as f:
+        bytes = f.read()
+        encoded = base64.b64encode(bytes)
 
-    return
+    shutil.rmtree("tmp1")
+    os.remove("zipped_"+ftype+"_images.zip")
+
+    return encoded
 
 def run_process(image_string, filters):
 
@@ -139,8 +157,8 @@ def run_process(image_string, filters):
        what filters the user selected
        :raises TypeError: If image input is not an image file
        :raises TypeError: If image_string is not a base64 string
-       :return image_filt_string: A base64 encoding of the final filtered image
-       :return image_prefilt_sgring: A base64 encoding of greyscale, input image
+       :return image_filt_string: A base64 encoding of the filtered jpg image
+       :return image_prefilt_string: A base64 encoding of greyscale, input jpg image
        :return im_size: A tuple with dimensions of input image
        :return histo_pre: The histogram arrays for the image pre-processing
        :return histo_post: The histogram arrays for the image post-processing
@@ -186,7 +204,9 @@ def run_process(image_string, filters):
 
 def main():
     imstring = encode_image_string("lion.jpg")
-    run_process(imstring, [1,0,0,0])
+    imstring2 = encode_image_string("lion.jpg")
+    resave_image([imstring, imstring2], "jpg")
+    #run_process(imstring, [1,0,0,0])
 
 if __name__ == "__main__":
     main()
