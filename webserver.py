@@ -46,9 +46,11 @@ def main_task():
             o_histogram = []
             p_histogram = []
             logging.debug('about to execute processing function')
-            for i,n in enumerate(originals):
-                [processed[n], o_size[n], o_histogram[n], p_histogram[n]] = \
-                    IP_Functions.run_process(i, functions)
+            # for i,n in enumerate(originals):
+            #     [processed[n], o_size[n], o_histogram[n], p_histogram[n]] = \
+            #         IP_Functions.run_process(i, functions)
+            [processed, orig, o_size, o_histogram, p_histogram] = \
+                IP_Functions.run_process(originals, functions)
             logging.debug('executed processing function')
             ret_time = datetime.datetime.now()
 
