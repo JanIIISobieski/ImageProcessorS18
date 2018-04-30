@@ -1,14 +1,7 @@
 import React from 'react';
 import List, { ListItem, ListItemSecondaryAction, ListItemText } from 'material-ui/List';
 import Checkbox from 'material-ui/Checkbox';
-
-const styles = theme => ({
-    root: {
-        width: '100%',
-        maxWidth: 360,
-        backgroundColor: theme.palette.background.paper,
-    },
-});
+import Button from 'material-ui/Button'
 
 class FunctionSelector extends React.Component {
     constructor(){
@@ -30,6 +23,10 @@ class FunctionSelector extends React.Component {
         }
 
         this.setState({checked: newChecked}, () => console.log({'check_state': this.state.checked}));
+    };
+
+    sendRequest = () => {
+
     };
 
     render(){
@@ -57,6 +54,14 @@ class FunctionSelector extends React.Component {
                         </ListItem>
                     ))}
                 </List>
+                <Button
+                    color="primary"
+                    variant='raised'
+                    onClick={this.sendRequest}
+                    disabled={this.state.checked.length === 0}
+                >
+                    Process Images
+                </Button>
             </div>
         );
     }
