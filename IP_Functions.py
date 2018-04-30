@@ -109,9 +109,13 @@ def decode_image_string(image_string):
         f.write(imgdata)
     return
 
+def unpack_zip(zip_string):
+
+    return
+
 
 def resave_image(image_strings, ftype):
-    
+
     """
     Returns a base64 encoding of a zipfile that contains
      images saved as a specified file type
