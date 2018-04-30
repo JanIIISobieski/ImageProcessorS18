@@ -1,10 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
 import List, { ListItem, ListItemSecondaryAction, ListItemText } from 'material-ui/List';
 import Checkbox from 'material-ui/Checkbox';
-import IconButton from 'material-ui/IconButton';
-import CommentIcon from '@material-ui/icons/Comment';
 
 const styles = theme => ({
     root: {
@@ -17,16 +13,53 @@ const styles = theme => ({
 class FunctionSelector extends React.Component {
     constructor(){
         super();
-        state = {
-            checked: [1, 0, 0, 0]
+        this.state = {
+            checked: [0]
         };
     }
 
+    handleToggle = value => () => {
+        const { checked } = this.state;
+        const currentIndex = checked.indexOf(value);
+        const newChecked = [...checked];
+
+        if (currentIndex === -1) {
+            newChecked.push(value);
+        } else {
+            newChecked.splice(currentIndex, 1);
+        }
+
+        this.setState({checked: newChecked}, () => console.log({'check_state': this.state.checked}));
+    };
+
     render(){
+        const function_names = ['Log Compression', 'Constrast Stretch', 'Histogram Equalization', 'Reverse Video'];
+
         return (
-          <div>
-              What
-          </div>
+            <div >
+                <List>
+                    {[0, 1, 2, 3].map(value => (
+                        <ListItem
+                            key={value}
+                            role={undefined}
+                            button
+                            onClick={this.handleToggle(value)}
+                        >
+                            <Checkbox
+                                checked={this.state.checked.indexOf(value) !== -1}
+                                tabIndex={-1}
+                                disableRipple
+                            />
+                            <ListItemText primary={function_names[value]} />
+                            <ListItemSecondaryAction>
+
+                            </ListItemSecondaryAction>
+                        </ListItem>
+                    ))}
+                </List>
+            </div>
         );
     }
 }
+
+export default FunctionSelector

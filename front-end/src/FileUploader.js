@@ -89,13 +89,23 @@ class FileUploader extends React.Component {
                     </ul>
                 </aside>
                 <div>
-                    <Button color="primary" variant='raised' onClick={this.onLeftButtonClick}>
+                    <Button
+                        color="primary"
+                        variant='raised'
+                        onClick={this.onLeftButtonClick}
+                        disabled={this.state.length_array === 0}
+                    >
                         Previous Image
                     </Button>
 
                     {(this.state.image_select + 1)*(this.state.length_array > 0)} out of {this.state.length_array}
 
-                    <Button color="primary" variant='raised' onClick={this.onRightButtonClick}>
+                    <Button
+                        color="primary"
+                        variant='raised'
+                        onClick={this.onRightButtonClick}
+                        disabled={this.state.length_array === 0}
+                    >
                         Next Image
                     </Button>
                 </div>
