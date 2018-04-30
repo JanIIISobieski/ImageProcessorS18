@@ -1,0 +1,13 @@
+name: imageprocessors18_env
+dependencies:
+        - python=3.6
+        - flask
+        - ipython
+        - sphinx
+        - pytest
+        - pytest-pep8
+        - pytest-cov
+        - pip
+        - requests
+        - scikit-image
+        - numpy
