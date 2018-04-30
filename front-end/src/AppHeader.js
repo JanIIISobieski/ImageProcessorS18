@@ -21,23 +21,12 @@ const styles = {
 
 
 class AppHeader extends React.Component{
-    constructor() {
-        super();
-        this.state = {
-          userID: '',
-          badEmail: true
-        };
+    constructor(props) {
+        super(props);
     }
 
     onTextFieldChange = (event) => {
-        this.setState({'userID': event.target.value}, () => console.log({'UserID': this.state.userID}));
-    };
-
-    validateEmail = (email) => {
-        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        var testVal = !re.test(String(email).toLowerCase());
-        console.log({badEmail: testVal});
-        return testVal
+        this.props.onChange(event)
     };
 
     render(){
@@ -52,9 +41,10 @@ class AppHeader extends React.Component{
                         <TextField
                             id='e-mail_input'
                             label='User E-mail'
-                            defaultValue={this.state.userID}
+                            defaultValue={this.props.email}
                             onChange={this.onTextFieldChange}
-                            error={this.validateEmail(this.state.userID)}>
+                            error={this.props.bad_email}
+                        >
                         </TextField>
                     </Toolbar>
                 </AppBar>
