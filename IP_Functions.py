@@ -2,12 +2,13 @@ from skimage import exposure
 import numpy as np
 from scipy import misc
 import base64
-import imageio
 import os
 import shutil
 import math
+import zipfile
 from PIL import Image
 import matplotlib.pyplot as plt
+
 
 def histo_equal(image):
     """
@@ -21,6 +22,7 @@ def histo_equal(image):
     image_he = image_he * (np.amax(image) - np.amin(image)) + np.amin(image)
 
     return image_he
+
 
 def contrast_stretch(image):
     """
@@ -36,6 +38,7 @@ def contrast_stretch(image):
 
     return (image_cs)
 
+
 def log_compression(image):
     """
        Performs log compression on input image
@@ -49,6 +52,7 @@ def log_compression(image):
 
     return(image_log)
 
+
 def rev_vid(image):
     """
        Performs reverse video filter on input image
@@ -59,6 +63,7 @@ def rev_vid(image):
     inverted = 255 - image
 
     return(inverted)
+
 
 def image_size(image):
     """
@@ -71,6 +76,7 @@ def image_size(image):
     size = np.shape(image)
 
     return(size)
+
 
 def histo(image):
     """
@@ -97,6 +103,7 @@ def encode_image_string(filename):
         image_string = base64.b64encode(image_file.read())
         return image_string
 
+
 def decode_image_string(image_string):
     """
     Creates a png image file of base64 encoded string
@@ -109,9 +116,53 @@ def decode_image_string(image_string):
         f.write(imgdata)
     return
 
-def unpack_zip(zip_string):
 
-    return
+def unpack_zip(zip_string):
+    """
+    Creates an array of base64 encoded image strings
+     from a base64 encoded zip file
+    :param zip_string: A base64 encoded zip file
+    that contains images
+    :return: An array of base64 encoded strings
+    corresponding to each image
+    """
+    decoded = base64.b64decode(zip_string)
+    if os.path.exists('strings.zip'):
+        os.remove('strings.zip')
+    filename = 'strings.zip'
+    with open(filename, 'wb') as f:
+        f.write(decoded)
+
+    if os.path.exists('images'):
+        shutil.rmtree('images')
+    zip_ref = zipfile.ZipFile('strings.zip', 'r')
+    zip_ref.extractall('images')
+    zip_ref.close()
+
+    image_strings = []
+    for filename in os.listdir('images'):
+        imstring = encode_image_string('images/'+filename)
+        image_strings.append(imstring)
+
+    os.remove('strings.zip')
+    shutil.rmtree('images')
+
+    return image_strings
+
+
+def return_image_strings(b64_string):
+    """
+    Returns an array of b64 encoded image strings from 1 of 2 inputs.
+    Either an array of base64 encoded strings or a base64 encoded zipfile.
+    :param b64_string: a base64 string that encodes a single image
+    :return: an array of b64 encoded image strings.
+    """
+
+    try:
+        if b64_string[0][0:10] == "data:image":
+            return b64_string
+    except:
+        return unpack_zip(b64_string)
 
 
 def resave_image(image_strings, ftype):
@@ -132,7 +183,7 @@ def resave_image(image_strings, ftype):
     i = 0
     for x in image_strings:
         try:
-            image = decode_image_string(x)
+            decode_image_string(x)
         except TypeError:
             print('base64 string expected')
 
@@ -151,6 +202,7 @@ def resave_image(image_strings, ftype):
     os.remove("zipped_"+ftype+"_images.zip")
 
     return encoded
+
 
 def run_process(image_string, filters):
 
@@ -179,7 +231,6 @@ def run_process(image_string, filters):
     except TypeError:
         print('Image file expected')
 
-
     misc.imsave('prefilt.jpg', im_array)
     image_prefilt_string = encode_image_string('prefilt.jpg')
     os.remove('prefilt.jpg')
@@ -207,10 +258,13 @@ def run_process(image_string, filters):
 
 
 def main():
-    imstring = encode_image_string("lion.jpg")
-    imstring2 = encode_image_string("lion.jpg")
-    resave_image([imstring, imstring2], "jpg")
+    imstring = encode_image_string('lion.jpg')
+    imstring2 = encode_image_string('lion.jpg')
+    zip_string = resave_image([imstring, imstring2], "png")
+    image_strings = unpack_zip(zip_string)
+    #decode_image_string(image_strings[0])
     #run_process(imstring, [1,0,0,0])
+
 
 if __name__ == "__main__":
     main()
