@@ -79,8 +79,8 @@ def get_latest_batch(email):
     :param email: username input (string)
     :return: image batch object from database
     """
-    a = models.ImageBatch.objects.get({"_id": email}).\
-        order_by([(models.ImageBatch.ret_time, 'descending')])
+    a = models.ImageBatch.objects.get({"_id": email}).all()
+    import pytest; pytest.set_trace()
     b = a.first()
     return b
 
