@@ -90,17 +90,11 @@ def save_files(images):
     names = []
     for pic in images:
         filename = str(uuid.uuid1())
-        [im_type, im_data] = pic.split(',')
         img = base64.b64decode(pic)
-        if im_type == 'data:image/jpg;base64':
-            filename = filename + '.jpg'
-        elif im_type == 'data:image/png;base64':
-            filename = filename + '.png'
-        elif im_type == 'data:image/tiff;base64':
-            filename = filename + '.tif'
+        filename = filename + '.jpg'
         pathname = os.path.join('imstore/', filename)
         with open(pathname, 'wb') as file:
-            file.write(im_data)
+            file.write(img)
         names.append(filename)
     return names
 
@@ -112,13 +106,6 @@ def get_files(email):
     im_strings = []
     batch = get_latest_batch(email)
     for pic in batch.p_image:
-        ext = pic.split('.')[1]
-        if ext == '.jpg':
-            header = 'data:image/jpg;base64,'
-        elif ext == '.png':
-            header = 'data:image/png;base64,'
-        elif ext == '.tif':
-            header = 'data:image/tiff;base64,'
         pathname = os.path.join('imstore/', pic)
         with open(pic, 'rb') as file:
             img = file.read()
