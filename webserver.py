@@ -61,6 +61,7 @@ def main_task():
             print(originals[0])
             for pic in originals:
                 [p, o, s, oh, ph] = IP_Functions.run_process(pic, functions)
+                app.logger.debug('anything?')
                 processed.append(p)
                 orig_gray.append(o)
                 size.append(s)
