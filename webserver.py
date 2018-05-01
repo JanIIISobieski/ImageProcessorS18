@@ -58,7 +58,6 @@ def main_task():
             o_histogram = []
             p_histogram = []
             app.logger.debug('about to execute processing function')
-            print(originals[0])
             for pic in originals:
                 [p, o, s, oh, ph] = IP_Functions.run_process(pic, functions)
                 app.logger.debug('anything?')
