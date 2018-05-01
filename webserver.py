@@ -98,7 +98,7 @@ def main_task():
         return "Images in wrong format", 415
 
 
-@app.route("/api/download_images", methods=["GET"])
+@app.route("/api/download_images", methods=["POST"])
 def download_task():
     """
     Receive GET request containing email (string) and picture format (string).
