@@ -113,14 +113,14 @@ def main_task():
 def download_task():
     """
     Receive GET request containing email (string) and picture format (string).
-    Get latest image batch for user and convert images to correct format
-    encoded in base64
+    Get array of encoded images (most recently uploaded) for user and convert
+    images to correct format encoded in base64. Put images in ZIP archive if
+    there is more than one to be returned.
     :return: base64 encoded images in correct format (JSON)
     """
     s = request.get_json()
     email = s["email"]
     im_format = s["format"]
     files = api.get_files(email)
-    # CONVERT FUNCTION NEEDED
-    # ZIP FUNCTION NEEDED
-    return jsonify(images=files) # for now just throw back the existing files
+    files = IP_Functions.resave_image(files, im_format)
+    return jsonify(images=files)
