@@ -3,6 +3,7 @@ import FileUploader from './FileUploader.js';
 import AppHeader from './AppHeader.js'
 import FunctionSelector from './FunctionSelector';
 import Downloader from './Downloader'
+import axios from 'axios'
 import './App.css';
 
 class App extends React.Component {
@@ -14,7 +15,11 @@ class App extends React.Component {
             bad_files: false,
             length_array: 0,
             all_image_array: '',
-            checked_func: [0]
+            data_received: {
+                email: '',
+                functions: '',
+                originals: '',
+            },
         };
     }
 
@@ -41,6 +46,13 @@ class App extends React.Component {
             this.setState({bad_files: false})
         }
         this.setState({all_image_array: []});
+        this.setState({data_received:
+                {
+                    email: '',
+                    functions: '',
+                    originals: '',
+                }
+        });
         acceptedImages.forEach(file => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -57,9 +69,31 @@ class App extends React.Component {
         });
     };
 
+    postRequest = (event, func_array) => {
+        var address = 'http://67.159.95.29:3000/api/process_images';
+        var chosen_func = [0, 0, 0, 0];
+        func_array.forEach(element => {
+           chosen_func[element] = 1
+        });
+
+        var json = {
+            'email': this.state.email,
+            'originals': this.state.all_image_array,
+            'functions': chosen_func
+        };
+        console.log({'post_request': [address, json]});
+        axios.post(address, json)
+            .then((response) => {
+                console.log({'axios_response': response});
+                this.setState({
+                    data_received: response.data
+                })
+            })
+    };
+
     render() {
         return (
-            <div class="outer">
+            <div className="outer">
                 <AppHeader
                     email={this.state.email}
                     bad_email={this.state.bad_email}
@@ -69,12 +103,15 @@ class App extends React.Component {
                     all_image_array={this.state.all_image_array}
                     onDrop={this.onDropSetter}
                     length={this.state.length_array}
+                    processed_data={this.state.data_received}
                 />
                 <div className="center">
                     <div className="adjacent">
                         <FunctionSelector
                             email={this.state.email}
                             files={this.state.all_image_array}
+                            length={this.state.length_array}
+                            get_processed={this.postRequest}
                         />
                         <Downloader
                             email={this.state.email}

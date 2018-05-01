@@ -25,8 +25,8 @@ class FunctionSelector extends React.Component {
         this.setState({checked: newChecked}, () => console.log({'check_state': this.state.checked}));
     };
 
-    sendRequest = () => {
-
+    sendRequest = (event) => {
+        this.props.get_processed(event, this.state.checked)
     };
 
     render(){
@@ -60,7 +60,7 @@ class FunctionSelector extends React.Component {
                     color="primary"
                     variant='raised'
                     onClick={this.sendRequest}
-                    disabled={this.state.checked.length === 0}
+                    disabled={this.state.checked.length === 0 || this.props.length === 0}
                 >
                     Process Images
                 </Button>
