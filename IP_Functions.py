@@ -201,6 +201,8 @@ def resave_image(image_strings, ftype):
         img = Image.open('image.png')
         img.save('image.'+ftype)
         encoded_1 = encode_image_string('image.'+ftype)
+        encoded_1 = str(encoded_1)[2:]
+        encoded_1 = "data:image/"+ftype+";base64," + str(encoded_1)
         os.remove('image.png')
         os.remove('image.'+ftype)
         return encoded_1
@@ -230,6 +232,8 @@ def resave_image(image_strings, ftype):
             bytes = f.read()
             encoded = base64.b64encode(bytes)
 
+        encoded = str(encoded)[2:]
+        encoded = "data:application/zip;base64," + str(encoded)
         shutil.rmtree("tmp1")
         os.remove("zipped_"+ftype+"_images.zip")
 
@@ -305,10 +309,10 @@ def run_process(image_string, filters):
 
 def main():
     imstring = encode_image_string('lion.jpg')
-    imstring2 = add_header(imstring)
-    #imstring2 = encode_image_string('lion.jpg')
+    imstring2 = encode_image_string('lion.jpg')
 
-    #zip_string = resave_image([imstring, imstring2], "tiff")
+    zip_string = resave_image([imstring, imstring2], "tiff")
+    print(zip_string[0:50])
     #image_strings = unpack_zip(zip_string)
     #decode_image_string(image_strings[0])
     #post, pre, im_size, histopre, histopost = run_process(imstring, [0,0,1,0])
