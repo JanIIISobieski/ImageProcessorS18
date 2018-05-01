@@ -118,6 +118,7 @@ class App extends React.Component {
                         <Downloader
                             email={this.state.email}
                             recieved={this.state.data_received}
+                            length={this.state.length_array}
                         />
                     </div>
                 </div>

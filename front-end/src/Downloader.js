@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import Radio, { RadioGroup } from 'material-ui/Radio';
 import { FormLabel, FormControl, FormControlLabel } from 'material-ui/Form';
+import download from 'downloadjs'
 import Button from 'material-ui/Button'
 
 const styles = theme => ({
@@ -19,7 +20,7 @@ const styles = theme => ({
 
 class RadioButtonsGroup extends React.Component {
     state = {
-        value: 'PNG',
+        value: 'png',
     };
 
     handleChange = event => {
@@ -28,9 +29,18 @@ class RadioButtonsGroup extends React.Component {
 
     sendRequest = () => {
         var img = this.props.recieved.originals[0];
-        var data = img.split(',')[1];
-        var url = 'data:application/octed-stream;base64,'+data;
-        window.open(url);
+        var ending = this.state.value;
+        var filename = 'processed';
+        var mime_string = '';
+        if (this.props.length === 1){
+            mime_string = mime_string.concat('image/', ending);
+            filename = filename.concat('.', ending)
+        } else{
+            mime_string = mime_string.concat('application/zip');
+            filename = filename.concat('.zip')
+        }
+        console.log({'download': [filename, mime_string]});
+        download(img, filename, mime_string);
     };
 
     render() {
@@ -48,9 +58,9 @@ class RadioButtonsGroup extends React.Component {
                             value={this.state.value}
                             onChange={this.handleChange}
                         >
-                            <FormControlLabel value="JPEG" control={<Radio />} label="JPEG" />
-                            <FormControlLabel value="PNG" control={<Radio />} label="PNG" />
-                            <FormControlLabel value="TIFF" control={<Radio />} label="TIFF" />
+                            <FormControlLabel value="jpg" control={<Radio />} label="JPEG" />
+                            <FormControlLabel value="png" control={<Radio />} label="PNG" />
+                            <FormControlLabel value="tiff" control={<Radio />} label="TIFF" />
                         </RadioGroup>
                     </FormControl>
                 </div>
