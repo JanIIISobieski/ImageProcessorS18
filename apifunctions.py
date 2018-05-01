@@ -12,7 +12,7 @@ def existing_user_metrics(email, functions):
     """
     u = models.User.objects.raw({"_id": email}).first()
     for i, n in enumerate(u.metrics):
-        u.metrics[n] = u.metrics[n] + functions[n]
+        u.metrics[i] = u.metrics[n] + functions[n]
     u.time = datetime.datetime.now()
     u.save()
 
