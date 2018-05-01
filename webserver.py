@@ -121,4 +121,7 @@ def download_task():
     s = request.get_json()
     email = s["email"]
     im_format = s["format"]
-    files = api.get_latest_batch(email)
+    files = api.get_files(email)
+    # CONVERT FUNCTION NEEDED
+    # ZIP FUNCTION NEEDED
+    return jsonify(images=files) # for now just throw back the existing files
