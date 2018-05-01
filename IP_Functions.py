@@ -236,6 +236,20 @@ def resave_image(image_strings, ftype):
         return encoded
 
 
+def add_header(image_string):
+
+    """
+    Adds the base64 encoding header for jpg images
+    to a base64 encoded string
+    :param image_string: A base64 encoded image string
+    without a header
+    :return: A base64 encoded string with a jpg header
+    """
+    image_string = str(image_string)[2:]
+    image_string_with_head = "data:image/jpg;base64,"+str(image_string)
+    return (image_string_with_head)
+
+
 def run_process(image_string, filters):
 
     """
@@ -291,13 +305,13 @@ def run_process(image_string, filters):
 
 def main():
     imstring = encode_image_string('lion.jpg')
+    imstring2 = add_header(imstring)
     #imstring2 = encode_image_string('lion.jpg')
 
     #zip_string = resave_image([imstring, imstring2], "tiff")
     #image_strings = unpack_zip(zip_string)
     #decode_image_string(image_strings[0])
-    post, pre, im_size, histopre, histopost = run_process(imstring, [0,0,1,0])
-    print(im_size)
+    #post, pre, im_size, histopre, histopost = run_process(imstring, [0,0,1,0])
 
 
 if __name__ == "__main__":
