@@ -50,12 +50,18 @@ def main_task():
             p_histogram = []
             for pic in originals:
                 outputs = IP_Functions.run_process(pic, functions)
-                processed.append(IP_Functions.add_header(outputs[0]))
-                orig_gray.append(IP_Functions.add_header(outputs[1]))
+                processed.append(outputs[0])
+                orig_gray.append(outputs[1])
                 size.append(outputs[2])
-                o_histogram.append(IP_Functions.add_header(outputs[3]))
-                p_histogram.append(IP_Functions.add_header(outputs[4]))
+                o_histogram.append(outputs[3])
+                p_histogram.append(outputs[4])
             ret_time = datetime.datetime.now()
+
+            for i, pic in originals:
+                psend = IP_Functions.add_header(processed[i])
+                osend = IP_Functions.add_header(orig_gray[i])
+                ohsend = IP_Functions.add_header(o_histogram[i])
+                phsend = IP_Functions.add_header(p_histogram[i])
 
             try:
                 api.existing_user_metrics(email, functions)  # update metrics
@@ -72,8 +78,8 @@ def main_task():
                 app.logger.error('Could not store original images in database')
                 return "Database is down", 503
             um = list(api.get_user_metrics(email))
-            return jsonify(processed=processed, original=orig_gray, size=size,
-                           o_hist=o_histogram, p_hist=p_histogram,
+            return jsonify(processed=psend, original=osend, size=size,
+                           o_hist=ohsend, p_hist=phsend,
                            up_time=up_time, ret_time=ret_time,
                            functions=functions, user_metrics=um)
         except TypeError:
