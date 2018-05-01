@@ -47,7 +47,7 @@ class FileUploader extends React.Component {
                 <p>Only *.jpeg, *.png, and *.zip files will be accepted</p>
                 <div className="dropzone">
                     <Dropzone
-                        accept="image/jpeg, image/png, application/zip"
+                        accept="image/jpeg, image/png, .zip"
                         onDrop= {this.onDrop}
                     >
                     </Dropzone>
@@ -73,7 +73,9 @@ class FileUploader extends React.Component {
                         Next Image
                     </Button>
                 </div>
-                <img src={this.props.all_image_array[this.state.image_select]} width='500'/>
+                <div className='adjacent'>
+                    <img src={this.props.all_image_array[this.state.image_select]} width='500'/>
+                </div>
             </section>
         );
     }

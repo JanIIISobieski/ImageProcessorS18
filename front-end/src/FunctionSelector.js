@@ -30,11 +30,13 @@ class FunctionSelector extends React.Component {
     };
 
     render(){
-        const function_names = ['Log Compression', 'Constrast Stretch', 'Histogram Equalization', 'Reverse Video'];
+        const function_names = ['Log Compression', 'Contrast Stretch', 'Histogram Equalization', 'Reverse Video'];
 
         return (
             <div >
-                <List>
+                <List
+                    disablePadding={true}
+                >
                     {[0, 1, 2, 3].map(value => (
                         <ListItem
                             key={value}

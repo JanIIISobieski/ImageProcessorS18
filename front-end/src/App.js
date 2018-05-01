@@ -14,7 +14,7 @@ class App extends React.Component {
             bad_files: false,
             length_array: 0,
             all_image_array: '',
-            checked_func: [0],
+            checked_func: [0]
         };
     }
 
@@ -59,7 +59,7 @@ class App extends React.Component {
 
     render() {
         return (
-            <div>
+            <div class="outer">
                 <AppHeader
                     email={this.state.email}
                     bad_email={this.state.bad_email}
@@ -70,9 +70,16 @@ class App extends React.Component {
                     onDrop={this.onDropSetter}
                     length={this.state.length_array}
                 />
-                <div>
-                    <FunctionSelector />
-                    <Downloader />
+                <div className="center">
+                    <div className="adjacent">
+                        <FunctionSelector
+                            email={this.state.email}
+                            files={this.state.all_image_array}
+                        />
+                        <Downloader
+                            email={this.state.email}
+                        />
+                    </div>
                 </div>
             </div>
         );
