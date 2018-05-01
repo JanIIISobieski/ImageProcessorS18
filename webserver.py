@@ -3,7 +3,6 @@ import models
 import datetime
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-# import decodeimage
 import logging
 import apifunctions as api
 import IP_Functions
@@ -12,12 +11,6 @@ import IP_Functions
 connect("mongodb://vcm-3483.vm.duke.edu:27017/image_app")
 app = Flask(__name__)
 CORS(app)
-
-
-if __name__ != '__main__':
-    gunicorn_logger = logging.getLogger('gunicorn.error')
-    app.logger.handlers = gunicorn_logger.handlers
-    app.logger.setLevel(gunicorn_logger.level)
 
 
 @app.route("/api/process_images", methods=["POST"])
@@ -39,7 +32,6 @@ def main_task():
     s = request.get_json()
     email = s["email"]
     functions = s["functions"]
-    app.logger.debug('got request')
     try:
         prelim = s["originals"]  # get image files
         originals = [0]
@@ -47,7 +39,6 @@ def main_task():
             originals[0] = prelim
         else:
             originals = prelim
-        app.logger.debug('got image')
         up_time = datetime.datetime.now()
         originals = IP_Functions.return_image_strings(originals)
 
@@ -57,7 +48,6 @@ def main_task():
             size = []
             o_histogram = []
             p_histogram = []
-            app.logger.debug('about to execute processing function')
             for pic in originals:
                 outputs = IP_Functions.run_process(pic, functions)
                 app.logger.debug('anything?')
@@ -66,26 +56,25 @@ def main_task():
                 size.append(outputs[2])
                 o_histogram.append(outputs[3])
                 p_histogram.append(outputs[4])
-            app.logger.debug('executed processing function')
             ret_time = datetime.datetime.now()
 
             batch = []
             for i, pic in enumerate(originals):
                 im = {}
-                im["original"] = orig_gray[i]
-                im["processed"] = processed[i]
-                im["original_histogram"] = o_histogram[i]
-                im["processed_histogram"] = p_histogram[i]
+                im["original"] = IP_Functions.add_header(orig_gray[i])
+                im["processed"] = IP_Functions.add_header(processed[i])
+                im["original_histogram"] = \
+                    IP_Functions.add_header(o_histogram[i])
+                im["processed_histogram"] = \
+                    IP_Functions.add_header(p_histogram[i])
                 im["image_size"] = size[i]
                 batch.append(im)
             try:
-                api.existing_user_metrics(email,
-                                          functions)  # update metrics for
-                #  existing user
+                api.existing_user_metrics(email, functions)  # update metrics
+                #  for existing user
             except errors.DoesNotExist:
-                api.new_user_metrics(email,
-                                     functions)  # if user doesn't exist,
-                # create user and set metrics
+                api.new_user_metrics(email, functions)  # if user doesn't
+                # exist, create user and set metrics
             try:
                 # save images in local directory with UUID name
                 api.store_uploads(email, orig_gray, up_time, functions,
@@ -94,7 +83,7 @@ def main_task():
             except errors.OperationError:
                 app.logger.error('Could not store original images in database')
                 return "Database is down", 503
-            um = api.get_user_metrics(email)
+            um = list(api.get_user_metrics(email))
             return jsonify(batch=batch, up_time=up_time, ret_time=ret_time,
                            functions=functions, user_metrics=um)
         except TypeError:

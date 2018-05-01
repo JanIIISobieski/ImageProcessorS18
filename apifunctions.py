@@ -68,8 +68,8 @@ def store_uploads(email, originals, up_time, functions, processed, o_histogram,
         b.p_image.append(save_files(processed[i]))
         b.o_hist.append(save_files(o_histogram[i]))
         b.p_hist.append(save_files(p_histogram[i]))
-        b.size0.append(size[0][i])
-        b.size1.append(size[1][i])
+        b.size0.append(size[i][0])
+        b.size1.append(size[i][1])
     b.save()
 
 
@@ -95,16 +95,13 @@ def save_files(images):
     import base64
     import os
 
-    names = []
-    for pic in images:
-        filename = str(uuid.uuid1())
-        img = base64.b64decode(pic)
-        filename = filename + '.jpg'
-        pathname = os.path.join('imstore/', filename)
-        with open(pathname, 'wb') as file:
-            file.write(img)
-        names.append(filename)
-    return names
+    filename = str(uuid.uuid1())
+    img = base64.b64decode(images)
+    filename = filename + '.jpg'
+    pathname = os.path.join('imstore/', filename)
+    with open(pathname, 'wb') as file:
+        file.write(img)
+    return filename
 
 
 def get_files(email):
@@ -121,7 +118,7 @@ def get_files(email):
     batch = get_latest_batch(email)
     for pic in batch.p_image:
         pathname = os.path.join('imstore/', pic)
-        with open(pic, 'rb') as file:
+        with open(pathname, 'rb') as file:
             img = file.read()
         enc_img = base64.b64encode(img)
         im_strings.append(enc_img)
