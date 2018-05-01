@@ -78,17 +78,31 @@ def image_size(image):
     return(size)
 
 
-def histo(image):
+def histo(image, case):
     """
-       Finds histogram of intensities in input image
+       Returns base 64 encoded jpg image of histogram plot for image
        :param image: an ndarray for a single-layer greyscale image,
        where each element corresponds to a pixel.
-       :return: A list of 2 arrays where the first is the normalized number
-        of pixels in an intensity range, and the second is the bins
-        of intensity ranges.
+       :return: A base64 encoded jpg image of histogram plot
        """
+    plt.clf()
+    H, bins = np.histogram(image, bins='auto', density=True)
+    plt.bar(bins[:-1], H, width=1)
+    if case == 1:
+        plt.title('Histogram of Processed Image')
+    else:
+        plt.title('Histogram of Original Image')
+    plt.xlabel('Value')
+    plt.ylabel('Density')
 
-    histogram = np.histogram(image, bins='auto', density=True)
+    if case == 1:
+        plt.savefig('Histo_Post.jpg')
+        histogram = encode_image_string('Histo_Post.jpg')
+        os.remove('Histo_Post.jpg')
+    else:
+        plt.savefig('Histo_Pre.jpg')
+        histogram = encode_image_string('Histo_Pre.jpg')
+        os.remove('Histo_Pre.jpg')
 
     return (histogram)
 
@@ -165,6 +179,8 @@ def return_image_strings(b64_array):
             b64_array[idx] = val[marker+7:]
         return b64_array
     else:
+        marker = b64_array[0].find("base64,")
+        b64_array[0] = b64_array[0][marker+7:]
         return unpack_zip(b64_array)
 
 
@@ -176,7 +192,8 @@ def resave_image(image_strings, ftype):
     :param image_strings: An array of base64 encoded image strings
     :param ftype: A string that specifies what filetype the user wants
      the files saved as (jpg, tiff, png...)
-    :return: base64 encoded zip archive of images
+    :return: base64 encoded zip archive of images or a
+    single base64 encoded image
     """
 
     if len(image_strings) == 1:
@@ -250,7 +267,7 @@ def run_process(image_string, filters):
     image_prefilt_string = encode_image_string('prefilt.jpg')
     os.remove('prefilt.jpg')
 
-    histo_pre = histo(im_array)
+    histo_pre = histo(im_array, 0)
     im_size = image_size(im_array)
 
     if filters[0] == 1:
@@ -263,7 +280,7 @@ def run_process(image_string, filters):
         im_array = rev_vid(im_array)
 
     image_filt = im_array
-    histo_post = histo(image_filt)
+    histo_post = histo(image_filt, 1)
 
     misc.imsave('postfilt.jpg', image_filt)
     image_filt_string = encode_image_string('postfilt.jpg')
@@ -279,7 +296,8 @@ def main():
     #zip_string = resave_image([imstring, imstring2], "tiff")
     #image_strings = unpack_zip(zip_string)
     #decode_image_string(image_strings[0])
-    #run_process(imstring, [1,0,0,0])
+    post, pre, im_size, histopre, histopost = run_process(imstring, [0,0,1,0])
+    print(im_size)
 
 
 if __name__ == "__main__":
