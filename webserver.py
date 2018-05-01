@@ -59,25 +59,25 @@ def main_task():
             p_histogram = []
             app.logger.debug('about to execute processing function')
             for pic in originals:
-                [p, o, s, oh, ph] = IP_Functions.run_process(pic, functions)
+                outputs = IP_Functions.run_process(pic, functions)
                 app.logger.debug('anything?')
-                processed.append(p)
-                orig_gray.append(o)
-                size.append(s)
-                o_histogram.append(oh)
-                p_histogram.append(ph)
+                processed.append(outputs[0])
+                orig_gray.append(outputs[1])
+                size.append(outputs[2])
+                o_histogram.append(outputs[3])
+                p_histogram.append(outputs[4])
             app.logger.debug('executed processing function')
             ret_time = datetime.datetime.now()
 
             batch = []
             for i, pic in enumerate(originals):
-                im = []
+                im = {}
                 im["original"] = orig_gray[i]
                 im["processed"] = processed[i]
                 im["original_histogram"] = o_histogram[i]
                 im["processed_histogram"] = p_histogram[i]
                 im["image_size"] = size[i]
-                batch[i] = im
+                batch.append(im)
             try:
                 api.existing_user_metrics(email,
                                           functions)  # update metrics for
