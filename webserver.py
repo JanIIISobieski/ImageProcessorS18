@@ -42,7 +42,7 @@ def main_task():
     app.logger.debug('got request')
     try:
         prelim = s["originals"]  # get image files
-        originals = []
+        originals = [0]
         if isinstance(prelim, str):
             originals[0] = prelim
         else:
@@ -59,9 +59,13 @@ def main_task():
             p_histogram = []
             app.logger.debug('about to execute processing function')
             print(originals[0])
-            for i, pic in enumerate(originals):
-                [processed[i], orig_gray[i], size[i], o_histogram[i],
-                 p_histogram[i]] = IP_Functions.run_process(pic, functions)
+            for pic in originals:
+                [p, o, s, oh, ph] = IP_Functions.run_process(pic, functions)
+                processed.append(p)
+                orig_gray.append(o)
+                size.append(s)
+                o_histogram.append(oh)
+                p_histogram.append(ph)
             app.logger.debug('executed processing function')
             ret_time = datetime.datetime.now()
 
