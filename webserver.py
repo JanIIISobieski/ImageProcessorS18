@@ -55,8 +55,7 @@ def main_task():
             # for i,n in enumerate(originals):
             #     [processed[n], o_size[n], o_histogram[n], p_histogram[n]] = \
             #         IP_Functions.run_process(i, functions)
-            [processed, orig, o_size, o_histogram, p_histogram] = \
-                IP_Functions.run_process(originals, functions)
+            [processed, orig, o_size, o_histogram, p_histogram] = IP_Functions.run_process(originals, functions)
             app.logger.debug('executed processing function')
             ret_time = datetime.datetime.now()
 
@@ -67,7 +66,7 @@ def main_task():
                 im["processed"] = processed[n]
                 im["original_histogram"] = o_histogram[n]
                 im["processed_histogram"] = p_histogram[n]
-                im["original_size"] = o_size[n]
+                im["image_size"] = o_size[n]
                 batch[n] = im
             try:
                 api.existing_user_metrics(email,
@@ -80,16 +79,10 @@ def main_task():
             try:
                 # save images in local directory with UUID name
                 api.store_uploads(email, originals, up_time,
-                                  functions)
+                                  functions, processed, o_histogram,
+                                  p_histogram, o_size, ret_time)
             except errors.OperationError:
                 app.logger.error('Could not store original images in database')
-                return "Database is down", 503
-            try:
-                api.store_returns(email, processed, o_histogram, p_histogram,
-                                  o_size, p_size, ret_time)  # store processed
-                # images and data in database
-            except errors.OperationError:
-                app.logger.error('Could not store processed images in database')
                 return "Database is down", 503
             return jsonify(batch=batch, up_time=up_time, ret_time=ret_time,
                            functions=functions,

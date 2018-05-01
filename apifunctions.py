@@ -40,8 +40,9 @@ def get_user_metrics(email):
     return [u.metrics, u.time]
 
 
-# store originals, functions, up_time in db
-def store_uploads(email, originals, up_time, functions):
+# store all image batch data in database
+def store_uploads(email, originals, up_time, functions, processed, o_histogram,
+                  p_histogram, o_size, ret_time):
     """
     Store functions and paths to original images in database image batch
     :param email: email input from user (string)
@@ -49,6 +50,11 @@ def store_uploads(email, originals, up_time, functions):
     :param up_time: time at which original images were uploaded (datetime
     object)
     :param functions: image processing functions chosen by user (array)
+    :param processed: processed images encoded in base64 (array)
+    :param o_histogram: histograms of original images (array of arrays)
+    :param p_histogram: histograms of processed images (array of arrays)
+    :param o_size: sizes of original images (array)
+    :param ret_time: post-processing time (datetime object)
     :return: save array of paths to local image directories in database image
     batch object
     """
@@ -56,31 +62,10 @@ def store_uploads(email, originals, up_time, functions):
     b.o_image = originals
     b.up_time = up_time
     b.functions = functions
-    b.save()
-
-
-# store processed, histograms, sizes, rettime in db
-def store_returns(email, processed, o_histogram, p_histogram, o_size, p_size,
-                  ret_time):
-    """
-    Store paths to processed image paths, image metrics, and post-processing
-    time in existing database image batch
-    :param email: email input from user (string)
-    :param processed: processed images encoded in base64 (array)
-    :param o_histogram: histograms of original images (array of arrays)
-    :param p_histogram: histograms of processed images (array of arrays)
-    :param o_size: sizes of original images (array)
-    :param p_size: sizes of processed images (array)
-    :param ret_time: post-processing time (datetime object)
-    :return: save array of paths to local image directories and associated
-    image metrics in image batch object in database
-    """
-    b = get_latest_batch(email)
     b.p_image = processed
     b.o_hist = o_histogram
     b.p_hist = p_histogram
     b.o_size = o_size
-    b.p_size = p_size
     b.ret_time = ret_time
     b.save()
 
