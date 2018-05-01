@@ -11,10 +11,13 @@ def existing_user_metrics(email, functions):
     object) in existing database user object
     """
     u = models.User.objects.raw({"_id": email}).first()
+    print('found user')
     for i, n in enumerate(u.metrics):
         u.metrics[n] = u.metrics[n] + functions[n]
+    print('updated metrics')
     u.time = datetime.datetime.now()
     u.save()
+    print('user saved')
 
 
 def new_user_metrics(email, functions):
@@ -25,9 +28,12 @@ def new_user_metrics(email, functions):
     :return: save new user (string) with initial function metrics (array) and
     current time (datetime object) in database user object
     """
-    u = models.User(email=email, metrics=functions,
-                    time=datetime.datetime.now())
+    u = models.User(email=email)
+    print('user object created')
+    u.metrics = functions
+    u.time = datetime.datetime.now()
     u.save()
+    print('new user object saved')
 
 
 def get_user_metrics(email):
@@ -60,7 +66,9 @@ def store_uploads(email, originals, up_time, functions, processed, o_histogram,
     batch object
     """
     b = models.ImageBatch(email=email)
+    print('image batch created')
     b.o_image = save_files(originals)
+    print('image files saved')
     b.up_time = up_time
     b.functions = functions
     b.p_image = save_files(processed)
@@ -96,11 +104,14 @@ def save_files(images):
     names = []
     for pic in images:
         filename = str(uuid.uuid1())
+        print('filename created')
         img = base64.b64decode(pic)
+        print('image decoded')
         filename = filename + '.jpg'
         pathname = os.path.join('imstore/', filename)
         with open(pathname, 'wb') as file:
             file.write(img)
+        print('file written')
         names.append(filename)
     return names
 

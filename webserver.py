@@ -52,20 +52,20 @@ def main_task():
         originals = IP_Functions.return_image_strings(originals)
 
         try:
-            processed = []
-            orig_gray = []
-            size = []
-            o_histogram = []
-            p_histogram = []
+            processed = ['a', 'b']
+            orig_gray = ['c', 'd']
+            size = [12, 36]
+            o_histogram = [[1, 2], [3, 4]]
+            p_histogram = [[5, 6], [7, 8]]
             app.logger.debug('about to execute processing function')
-            for pic in originals:
-                [p, o, s, oh, ph] = IP_Functions.run_process(pic, functions)
-                app.logger.debug('anything?')
-                processed.append(p)
-                orig_gray.append(o)
-                size.append(s)
-                o_histogram.append(oh)
-                p_histogram.append(ph)
+            # for pic in originals:
+            #     [p, o, s, oh, ph] = IP_Functions.run_process(pic, functions)
+            #     app.logger.debug('anything?')
+            #     processed.append(p)
+            #     orig_gray.append(o)
+            #     size.append(s)
+            #     o_histogram.append(oh)
+            #     p_histogram.append(ph)
             app.logger.debug('executed processing function')
             ret_time = datetime.datetime.now()
 
@@ -79,21 +79,32 @@ def main_task():
                 im["image_size"] = size[i]
                 batch[i] = im
             try:
+                app.logger.debug('will find existing user')
                 api.existing_user_metrics(email,
                                           functions)  # update metrics for
                 #  existing user
+                app.logger.debug('existing user updated')
             except errors.DoesNotExist:
+                app.logger.debug('will create new user')
                 api.new_user_metrics(email,
                                      functions)  # if user doesn't exist,
                 # create user and set metrics
+                app.logger.debug('new user created')
+            except:
+                app.logger.debug('could not store/create user in db')
             try:
                 # save images in local directory with UUID name
+                app.logger.debug('will store images in db')
                 api.store_uploads(email, orig_gray, up_time, functions,
                                   processed, o_histogram, p_histogram, size,
                                   ret_time)
+                app.logger.debug('images stored in db')
             except errors.OperationError:
                 app.logger.error('Could not store original images in database')
                 return "Database is down", 503
+            except:
+                app.logger.debug('Could not store images in db')
+            app.logger.debug('got to jsonify wooo')
             return jsonify(batch=batch, up_time=up_time, ret_time=ret_time,
                            functions=functions,
                            user_metrics=api.get_user_metrics(email))
