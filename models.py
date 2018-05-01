@@ -15,6 +15,5 @@ class ImageBatch(MongoModel):
     functions = fields.ListField(fields.IntegerField())
     o_hist = fields.ListField(fields.IntegerField())
     p_hist = fields.ListField(fields.IntegerField())
-    o_size = fields.ListField(fields.IntegerField())
-    p_size = fields.ListField(fields.IntegerField())
+    size = fields.ListField(fields.IntegerField())
     ret_time = fields.DateTimeField()
