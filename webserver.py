@@ -71,7 +71,7 @@ def main_task():
 
             batch = []
             for i, pic in enumerate(originals):
-                im = []
+                im = {}
                 im["original"] = orig_gray[i]
                 im["processed"] = processed[i]
                 im["original_histogram"] = o_histogram[i]
