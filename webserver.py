@@ -41,7 +41,12 @@ def main_task():
     functions = s["functions"]
     app.logger.debug('got request')
     try:
-        originals = s["originals"]  # get image files
+        prelim = s["originals"]  # get image files
+        originals = []
+        if isinstance(prelim, basestring):
+            originals[0] = prelim
+        else:
+            originals = prelim
         app.logger.debug('got image')
         up_time = datetime.datetime.now()
         # verify that images are encoded in base64
@@ -53,6 +58,7 @@ def main_task():
             o_histogram = []
             p_histogram = []
             app.logger.debug('about to execute processing function')
+            print(originals[0])
             for i, pic in enumerate(originals):
                 [processed[i], orig_gray[i], size[i], o_histogram[i],
                  p_histogram[i]] = IP_Functions.run_process(pic, functions)
