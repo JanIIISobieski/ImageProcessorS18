@@ -41,9 +41,8 @@ def main_task():
     functions = s["functions"]
     app.logger.debug('got request')
     try:
-        [originals] = s["originals"]  # get image files
+        originals =  s["originals"]  # get image files
         app.logger.debug('got image')
-        originals = IP_Functions.return_image_strings(originals)
         up_time = datetime.datetime.now()
         return jsonify(email=email, functions=functions, originals=originals)
         # verify that images are encoded in base64
