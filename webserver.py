@@ -43,13 +43,13 @@ def main_task():
     try:
         prelim = s["originals"]  # get image files
         originals = []
-        if isinstance(prelim, basestring):
+        if isinstance(prelim, str):
             originals[0] = prelim
         else:
             originals = prelim
         app.logger.debug('got image')
         up_time = datetime.datetime.now()
-        # verify that images are encoded in base64
+        originals = IP_Functions.return_image_strings(originals)
 
         try:
             processed = []
