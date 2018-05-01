@@ -41,34 +41,43 @@ def main_task():
     functions = s["functions"]
     app.logger.debug('got request')
     try:
-        originals = s["originals"]  # get image files
+        prelim = s["originals"]  # get image files
+        originals = [0]
+        if isinstance(prelim, str):
+            originals[0] = prelim
+        else:
+            originals = prelim
         app.logger.debug('got image')
         up_time = datetime.datetime.now()
-        # verify that images are encoded in base64
+        originals = IP_Functions.return_image_strings(originals)
 
         try:
             processed = []
-            o_size = []
+            orig_gray = []
+            size = []
             o_histogram = []
             p_histogram = []
             app.logger.debug('about to execute processing function')
-            # for i,n in enumerate(originals):
-            #     [processed[n], o_size[n], o_histogram[n], p_histogram[n]] = \
-            #         IP_Functions.run_process(i, functions)
-            [processed, orig, o_size, o_histogram, p_histogram] = \
-                IP_Functions.run_process(originals, functions)
+            for pic in originals:
+                [p, o, s, oh, ph] = IP_Functions.run_process(pic, functions)
+                app.logger.debug('anything?')
+                processed.append(p)
+                orig_gray.append(o)
+                size.append(s)
+                o_histogram.append(oh)
+                p_histogram.append(ph)
             app.logger.debug('executed processing function')
             ret_time = datetime.datetime.now()
 
             batch = []
-            for i, n in enumerate(originals):
+            for i, pic in enumerate(originals):
                 im = []
-                im["original"] = i
-                im["processed"] = processed[n]
-                im["original_histogram"] = o_histogram[n]
-                im["processed_histogram"] = p_histogram[n]
-                im["original_size"] = o_size[n]
-                batch[n] = im
+                im["original"] = orig_gray[i]
+                im["processed"] = processed[i]
+                im["original_histogram"] = o_histogram[i]
+                im["processed_histogram"] = p_histogram[i]
+                im["image_size"] = size[i]
+                batch[i] = im
             try:
                 api.existing_user_metrics(email,
                                           functions)  # update metrics for
@@ -79,17 +88,11 @@ def main_task():
                 # create user and set metrics
             try:
                 # save images in local directory with UUID name
-                api.store_uploads(email, originals, up_time,
-                                  functions)
+                api.store_uploads(email, orig_gray, up_time, functions,
+                                  processed, o_histogram, p_histogram, size,
+                                  ret_time)
             except errors.OperationError:
                 app.logger.error('Could not store original images in database')
-                return "Database is down", 503
-            try:
-                api.store_returns(email, processed, o_histogram, p_histogram,
-                                  o_size, p_size, ret_time)  # store processed
-                # images and data in database
-            except errors.OperationError:
-                app.logger.error('Could not store processed images in database')
                 return "Database is down", 503
             return jsonify(batch=batch, up_time=up_time, ret_time=ret_time,
                            functions=functions,
@@ -98,7 +101,7 @@ def main_task():
             app.logger.error('Could not process uploaded images')
             return "Processing of images failed", 422
         except:
-            app.logger.error('Couldnt process')
+            app.logger.error('Could not process')
             return "Process failed", 422
     except TypeError:
         app.logger.error('Did not receive image encoded in base64')  # Image not
@@ -110,11 +113,14 @@ def main_task():
 def download_task():
     """
     Receive GET request containing email (string) and picture format (string).
-    Get latest image batch for user and convert images to correct format
-    encoded in base64
+    Get array of encoded images (most recently uploaded) for user and convert
+    images to correct format encoded in base64. Put images in ZIP archive if
+    there is more than one to be returned.
     :return: base64 encoded images in correct format (JSON)
     """
     s = request.get_json()
     email = s["email"]
     im_format = s["format"]
-    files = api.get_latest_batch(email)
+    files = api.get_files(email)
+    files = IP_Functions.resave_image(files, im_format)
+    return jsonify(images=files)
