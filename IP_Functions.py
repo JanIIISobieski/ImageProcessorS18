@@ -188,7 +188,8 @@ def resave_image(image_strings, ftype):
 
     """
     Returns a base64 encoding of a single image or
-    zipfile of images that are saved as a specified file type
+    zipfile of images, with a header, that are saved as a
+    specified file type
     :param image_strings: An array of base64 encoded image strings
     :param ftype: A string that specifies what filetype the user wants
      the files saved as (jpg, tiff, png...)
