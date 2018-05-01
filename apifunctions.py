@@ -82,14 +82,14 @@ def get_latest_batch(email):
     return b
 
 
-def save_files(originals):
+def save_files(images):
     import uuid
     import base64
     import os
 
     names = []
-    for pic in originals:
-        filename = uuid.uuid1()
+    for pic in images:
+        filename = str(uuid.uuid1())
         [im_type, im_data] = pic.split(',')
         img = base64.b64decode(pic)
         if im_type == 'data:image/jpg;base64':
@@ -98,7 +98,7 @@ def save_files(originals):
             filename = filename + '.png'
         elif im_type == 'data:image/tiff;base64':
             filename = filename + '.tif'
-        pathname = os.path.join('/imstore/', filename)
+        pathname = os.path.join('imstore/', filename)
         with open(pathname, 'wb') as file:
             file.write(im_data)
         names.append(filename)
@@ -107,19 +107,21 @@ def save_files(originals):
 
 def get_files(email):
     import base64
+    import os
 
     im_strings = []
     batch = get_latest_batch(email)
     for pic in batch.p_image:
-        if pic.split('.')[1] == '.jpg':
+        ext = pic.split('.')[1]
+        if ext == '.jpg':
             header = 'data:image/jpg;base64,'
-        elif pic.split('.')[1] == '.png':
+        elif ext == '.png':
             header = 'data:image/png;base64,'
-        elif pic.split('.')[1] == '.tif':
+        elif ext == '.tif':
             header = 'data:image/tiff;base64,'
+        pathname = os.path.join('imstore/', pic)
         with open(pic, 'rb') as file:
             img = file.read()
         enc_img = base64.b64encode(img)
-        enc_img = header + enc_img
         im_strings.append(enc_img)
     return im_strings
