@@ -94,9 +94,9 @@ def main_task():
             except errors.OperationError:
                 app.logger.error('Could not store original images in database')
                 return "Database is down", 503
+            um = api.get_user_metrics(email)
             return jsonify(batch=batch, up_time=up_time, ret_time=ret_time,
-                           functions=functions,
-                           user_metrics=api.get_user_metrics(email))
+                           functions=functions, user_metrics=um)
         except TypeError:
             app.logger.error('Could not process uploaded images')
             return "Processing of images failed", 422
