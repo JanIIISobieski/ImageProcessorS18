@@ -27,7 +27,10 @@ class RadioButtonsGroup extends React.Component {
     };
 
     sendRequest = () => {
-
+        var img = this.props.recieved.originals[0];
+        var data = img.split(',')[1];
+        var url = 'data:application/octed-stream;base64,'+data;
+        window.open(url);
     };
 
     render() {
@@ -47,7 +50,7 @@ class RadioButtonsGroup extends React.Component {
                         >
                             <FormControlLabel value="JPEG" control={<Radio />} label="JPEG" />
                             <FormControlLabel value="PNG" control={<Radio />} label="PNG" />
-                            <FormControlLabel value="BMP" control={<Radio />} label="BMP" />
+                            <FormControlLabel value="TIFF" control={<Radio />} label="TIFF" />
                         </RadioGroup>
                     </FormControl>
                 </div>

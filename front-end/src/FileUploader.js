@@ -42,9 +42,8 @@ class FileUploader extends React.Component {
 
     render() {
         return (
+            <div>
             <section>
-                <p>Try dropping some files here, or click to select files to upload.</p>
-                <p>Only *.jpeg, *.png, and *.zip files will be accepted</p>
                 <div className="dropzone">
                     <Dropzone
                         accept="image/jpeg, image/png, .zip"
@@ -73,11 +72,12 @@ class FileUploader extends React.Component {
                         Next Image
                     </Button>
                 </div>
-                <div className='adjacent'>
-                    <img src={this.props.all_image_array[this.state.image_select]} width='500'/>
-                    <img src={this.props.processed_data.originals[this.state.image_select]} width='500'/>
-                </div>
             </section>
+                <div className='image_adjacent'>
+                    <img src={this.props.all_image_array[this.state.image_select]}/>
+                    <img src={this.props.processed_data.originals[this.state.image_select]}/>
+                </div>
+            </div>
         );
     }
 }

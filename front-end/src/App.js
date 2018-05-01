@@ -93,20 +93,22 @@ class App extends React.Component {
 
     render() {
         return (
-            <div className="outer">
+            <div>
                 <AppHeader
                     email={this.state.email}
                     bad_email={this.state.bad_email}
                     onChange={this.onEmailFieldChange}
                 />
-                <FileUploader
-                    all_image_array={this.state.all_image_array}
-                    onDrop={this.onDropSetter}
-                    length={this.state.length_array}
-                    processed_data={this.state.data_received}
-                />
-                <div className="center">
-                    <div className="adjacent">
+                <div>
+                    <FileUploader
+                        all_image_array={this.state.all_image_array}
+                        onDrop={this.onDropSetter}
+                        length={this.state.length_array}
+                        processed_data={this.state.data_received}
+                    />
+                </div>
+                <div>
+                    <div className="functions_adjacent">
                         <FunctionSelector
                             email={this.state.email}
                             files={this.state.all_image_array}
@@ -115,6 +117,7 @@ class App extends React.Component {
                         />
                         <Downloader
                             email={this.state.email}
+                            recieved={this.state.data_received}
                         />
                     </div>
                 </div>

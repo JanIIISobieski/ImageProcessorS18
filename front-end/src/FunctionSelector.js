@@ -33,7 +33,7 @@ class FunctionSelector extends React.Component {
         const function_names = ['Log Compression', 'Contrast Stretch', 'Histogram Equalization', 'Reverse Video'];
 
         return (
-            <div >
+            <div className='center'>
                 <List
                     disablePadding={true}
                 >
