@@ -60,14 +60,16 @@ def store_uploads(email, originals, up_time, functions, processed, o_histogram,
     batch object
     """
     b = models.ImageBatch(email=email)
-    b.o_image = save_files(originals)
     b.up_time = up_time
-    b.functions = functions
-    b.p_image = save_files(processed)
-    b.o_hist = o_histogram
-    b.p_hist = p_histogram
-    b.size = size
     b.ret_time = ret_time
+    b.functions = functions
+    for i,pic in enumerate(originals):
+        b.o_image.append(save_files(pic))
+        b.p_image.append(save_files(processed[i]))
+        b.o_hist.append(save_files(o_histogram[i]))
+        b.p_hist.append(save_files(p_histogram[i]))
+        b.size0.append(size[0][i])
+        b.size1.append(size[1][i])
     b.save()
 
 
