@@ -41,34 +41,33 @@ def main_task():
     functions = s["functions"]
     app.logger.debug('got request')
     try:
-        [originals] = s["originals"]  # get image files
+        originals = s["originals"]  # get image files
         app.logger.debug('got image')
-        originals = IP_Functions.return_image_strings(originals)
         up_time = datetime.datetime.now()
         # verify that images are encoded in base64
 
         try:
             processed = []
-            o_size = []
+            orig_gray = []
+            size = []
             o_histogram = []
             p_histogram = []
             app.logger.debug('about to execute processing function')
-            # for i,n in enumerate(originals):
-            #     [processed[n], o_size[n], o_histogram[n], p_histogram[n]] = \
-            #         IP_Functions.run_process(i, functions)
-            [processed, orig, o_size, o_histogram, p_histogram] = IP_Functions.run_process(originals, functions)
+            for i, pic in enumerate(originals):
+                [processed[i], orig_gray[i], size[i], o_histogram[i],
+                 p_histogram[i]] = IP_Functions.run_process(pic, functions)
             app.logger.debug('executed processing function')
             ret_time = datetime.datetime.now()
 
             batch = []
-            for i, n in enumerate(originals):
+            for i, pic in enumerate(originals):
                 im = []
-                im["original"] = i
-                im["processed"] = processed[n]
-                im["original_histogram"] = o_histogram[n]
-                im["processed_histogram"] = p_histogram[n]
-                im["image_size"] = o_size[n]
-                batch[n] = im
+                im["original"] = orig_gray[i]
+                im["processed"] = processed[i]
+                im["original_histogram"] = o_histogram[i]
+                im["processed_histogram"] = p_histogram[i]
+                im["image_size"] = size[i]
+                batch[i] = im
             try:
                 api.existing_user_metrics(email,
                                           functions)  # update metrics for
@@ -79,9 +78,9 @@ def main_task():
                 # create user and set metrics
             try:
                 # save images in local directory with UUID name
-                api.store_uploads(email, originals, up_time,
-                                  functions, processed, o_histogram,
-                                  p_histogram, o_size, ret_time)
+                api.store_uploads(email, orig_gray, up_time, functions,
+                                  processed, o_histogram, p_histogram, size,
+                                  ret_time)
             except errors.OperationError:
                 app.logger.error('Could not store original images in database')
                 return "Database is down", 503
@@ -92,7 +91,7 @@ def main_task():
             app.logger.error('Could not process uploaded images')
             return "Processing of images failed", 422
         except:
-            app.logger.error('Couldnt process')
+            app.logger.error('Could not process')
             return "Process failed", 422
     except TypeError:
         app.logger.error('Did not receive image encoded in base64')  # Image not
