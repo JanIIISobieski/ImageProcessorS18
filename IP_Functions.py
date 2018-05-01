@@ -150,58 +150,73 @@ def unpack_zip(zip_string):
     return image_strings
 
 
-def return_image_strings(b64_string):
+def return_image_strings(b64_array):
     """
-    Returns an array of b64 encoded image strings from 1 of 2 inputs.
-    Either an array of base64 encoded strings or a base64 encoded zipfile.
-    :param b64_string: a base64 string that encodes a single image
+    Returns an array of b64 encoded image strings, without headers,
+    from 1 of 2 inputs.  Either an array of base64 encoded
+    strings or a base64 encoded zipfile.
+    :param b64_array: an array of base64 strings
     :return: an array of b64 encoded image strings.
     """
 
-    try:
-        if b64_string[0][0:10] == "data:image":
-            return b64_string
-    except:
-        return unpack_zip(b64_string)
+    if b64_array[0][0:10] == "data:image":
+        for idx, val in enumerate(b64_array):
+            marker = val.find("base64,")
+            b64_array[idx] = val[marker+7:]
+        return b64_array
+    else:
+        return unpack_zip(b64_array)
 
 
 def resave_image(image_strings, ftype):
 
     """
-    Returns a base64 encoding of a zipfile that contains
-     images saved as a specified file type
+    Returns a base64 encoding of a single image or
+    zipfile of images that are saved as a specified file type
     :param image_strings: An array of base64 encoded image strings
     :param ftype: A string that specifies what filetype the user wants
      the files saved as (jpg, tiff, png...)
     :return: base64 encoded zip archive of images
     """
 
-    if os.path.exists("tmp1"):
+    if len(image_strings) == 1:
+        decode_image_string(image_strings[0])
+        img = Image.open('image.png')
+        img.save('image.'+ftype)
+        encoded_1 = encode_image_string('image.'+ftype)
+        os.remove('image.png')
+        os.remove('image.'+ftype)
+        return encoded_1
+    else:
+        if os.path.exists("tmp1"):
+            shutil.rmtree("tmp1")
+
+        os.makedirs("tmp1")
+        i = 0
+
+        for x in image_strings:
+            try:
+                decode_image_string(x)
+            except TypeError:
+                print('base64 string expected')
+
+            img = Image.open('image.png')
+            img.save('tmp1/image'+str(i)+'.'+ftype)
+            os.remove('image.png')
+            i = i + 1
+
+        if os.path.exists("zipped_"+ftype+"_images.zip"):
+            os.remove("zipped_"+ftype+"_images.zip")
+        shutil.make_archive("zipped_"+ftype+"_images", 'zip', "tmp1")
+
+        with open("zipped_"+ftype+"_images.zip", 'rb') as f:
+            bytes = f.read()
+            encoded = base64.b64encode(bytes)
+
         shutil.rmtree("tmp1")
-
-    os.makedirs("tmp1")
-    i = 0
-    for x in image_strings:
-        try:
-            decode_image_string(x)
-        except TypeError:
-            print('base64 string expected')
-
-        shutil.move("image.png", "tmp1/image"+str(i)+".png")
-        i = i + 1
-
-    if os.path.exists("zipped_"+ftype+"_images.zip"):
         os.remove("zipped_"+ftype+"_images.zip")
-    shutil.make_archive("zipped_"+ftype+"_images", 'zip', "tmp1")
 
-    with open("zipped_"+ftype+"_images.zip", 'rb') as f:
-        bytes = f.read()
-        encoded = base64.b64encode(bytes)
-
-    shutil.rmtree("tmp1")
-    os.remove("zipped_"+ftype+"_images.zip")
-
-    return encoded
+        return encoded
 
 
 def run_process(image_string, filters):
@@ -259,9 +274,10 @@ def run_process(image_string, filters):
 
 def main():
     imstring = encode_image_string('lion.jpg')
-    imstring2 = encode_image_string('lion.jpg')
-    zip_string = resave_image([imstring, imstring2], "png")
-    image_strings = unpack_zip(zip_string)
+    #imstring2 = encode_image_string('lion.jpg')
+
+    #zip_string = resave_image([imstring, imstring2], "tiff")
+    #image_strings = unpack_zip(zip_string)
     #decode_image_string(image_strings[0])
     #run_process(imstring, [1,0,0,0])
 
