@@ -1,4 +1,5 @@
 import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 from skimage import exposure
 import numpy as np
@@ -9,7 +10,6 @@ import shutil
 import math
 import zipfile
 from PIL import Image
-matplotlib.use('TkAgg')
 
 
 def histo_equal(image):
