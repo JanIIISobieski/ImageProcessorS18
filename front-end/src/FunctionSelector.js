@@ -60,7 +60,7 @@ class FunctionSelector extends React.Component {
                     color="primary"
                     variant='raised'
                     onClick={this.sendRequest}
-                    disabled={this.state.checked.length === 0 || this.props.length === 0}
+                    disabled={this.state.checked.length === 0 || this.props.length === 0 || this.props.bad_email_flag}
                 >
                     Process Images
                 </Button>

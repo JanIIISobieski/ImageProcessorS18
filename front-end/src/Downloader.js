@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import Radio, { RadioGroup } from 'material-ui/Radio';
 import { FormLabel, FormControl, FormControlLabel } from 'material-ui/Form';
+import axios from 'axios'
 import download from 'downloadjs'
 import Button from 'material-ui/Button'
 
@@ -21,6 +22,7 @@ const styles = theme => ({
 class RadioButtonsGroup extends React.Component {
     state = {
         value: 'png',
+        download_data: ''
     };
 
     handleChange = event => {
@@ -28,6 +30,30 @@ class RadioButtonsGroup extends React.Component {
     };
 
     sendRequest = () => {
+        var address = 'http://67.159.95.29:5000/api/process_images';
+        var format = [];
+
+        if (this.state.value === 'jpg'){
+            format = 'jpeg'
+        } else{
+            format = this.state.value
+        }
+
+        var json = {
+            'email': this.state.email,
+            'format': format
+        };
+
+        console.log({'post_request': [address, json]});
+        axios.post(address, json)
+            .then((response) => {
+                console.log({'axios_download': response});
+                console.log({'pre_download_state': this.state.download_data});
+                this.setState({download_data: response.data},
+                    () => console.log({'post_download_state': this.state.download_data})
+                )
+            });
+
         var img = this.props.recieved.processed[0];
         var ending = this.state.value;
         var filename = 'processed';

@@ -35,16 +35,16 @@ class UserMetrics extends React.Component{
 
     render() {
         var data = [];
-        if (typeof this.props.data.user_metrics[0].length < 4){
+        if (this.props.data.user_metrics[0].length < 4){
             data = {
                 up_time: '',
                 ret_time: '',
                 user_metrics: ['', '', '', '']
             }
-        }   else{
+        } else{
             data = this.props.data
         }
-        var table_body = this.makeTable(data);
+        const table_body = this.makeTable(this.props.data);
 
         return(
             <div>

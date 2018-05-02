@@ -46,14 +46,15 @@ class FileUploader extends React.Component {
         return (
             <div>
             <section>
-                <div className="dropzone">
+                <div className="center">
                     <Dropzone
                         accept="image/jpeg, image/png, .zip"
                         onDrop= {this.onDrop}
                     >
+                        Drag .png, .jpeg, or .zip files of images here
                     </Dropzone>
                 </div>
-                <div>
+                <div className='center'>
                     <Button
                         color="primary"
                         variant='raised'
@@ -73,6 +74,10 @@ class FileUploader extends React.Component {
                     >
                         Next Image
                     </Button>
+                    <div className='center'>
+                        Image size: {this.props.processed_data.size[this.state.image_select][0]}
+                        x {this.props.processed_data.size[this.state.image_select][1]}
+                    </div>
                 </div>
             </section>
                 <div className='image_adjacent'>
@@ -83,7 +88,6 @@ class FileUploader extends React.Component {
                     <img src={this.props.processed_data.o_hist[this.state.image_select]}/>
                     <img src={this.props.processed_data.p_hist[this.state.image_select]}/>
                 </div>
-                Size of Image {this.props.processed_data.size[this.state.image_select][0]} x {this.props.processed_data.size[this.state.image_select][1]}
             </div>
         );
     }

@@ -22,10 +22,10 @@ class App extends React.Component {
                 original: '',
                 processed: '',
                 p_hist: '',
-                ret_time: '',
+                ret_time: 'No info yet',
                 size: ['', ''],
-                up_time: '',
-                user_metrics: [['', '', '', ''], ''],
+                up_time: 'No info yet',
+                user_metrics: [['0', '0', '0', '0'], ''],
             },
         };
     }
@@ -102,6 +102,17 @@ class App extends React.Component {
                     onChange={this.onEmailFieldChange}
                 />
                 <div>
+                    <p>
+                        Directions: Drag files into the box. Provide a valid email in the bar above. Select wanted
+                        processing functions (at least one must be selected).
+                        If no email given and no images uploaded, the process button will be disabled.
+                        Press the process button to get images back. Use the Next Image and Previous Images to cycle
+                        through the uploaded files. To download the image set in a given format, select the wanted
+                        download format and press download. Image set will automatically download as a .zip if multiple
+                        images, or as the wanted image type if a single image.
+                    </p>
+                </div>
+                <div>
                     <FileUploader
                         all_image_array={this.state.all_image_array}
                         onDrop={this.onDropSetter}
@@ -113,6 +124,7 @@ class App extends React.Component {
                     <div className="functions_adjacent">
                         <FunctionSelector
                             email={this.state.email}
+                            bad_email_flag={this.state.bad_email}
                             files={this.state.all_image_array}
                             length={this.state.length_array}
                             get_processed={this.postRequest}
