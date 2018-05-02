@@ -21,4 +21,4 @@ To setup the web server, ensure that the working directory contains the files we
 ```
 gunicorn --bind 0.0.0.0:5000 --workers 4 webserver:app
 ```
-The number of workers can be modified as desired, or ```workers 4``` can be removed for launch with just one worker.
+The number of workers can be modified as desired, or ```--workers 4``` can be removed for launch with just one worker.
