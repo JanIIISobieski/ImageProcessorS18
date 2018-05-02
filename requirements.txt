@@ -9,3 +9,4 @@ numpy
 imageio
 pillow==5.0
 matplotlib
+sphinx

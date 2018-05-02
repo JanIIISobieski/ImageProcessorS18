@@ -1,3 +1,6 @@
+import matplotlib
+matplotlib.use('TkAgg')
+import matplotlib.pyplot as plt
 from skimage import exposure
 import numpy as np
 from scipy import misc
@@ -7,15 +10,17 @@ import shutil
 import math
 import zipfile
 from PIL import Image
-import matplotlib.pyplot as plt
+
 
 
 def histo_equal(image):
     """
     Performs histogram equalization on input image.
+
     :param image: an ndarray for a single-layer greyscale image,
     where each element corresponds to a pixel.
     :return: A histogram equalized ndarray
+
     """
 
     image_he = exposure.equalize_hist(image)
@@ -27,9 +32,11 @@ def histo_equal(image):
 def contrast_stretch(image):
     """
     Performs contrast stretching on input image
+
     :param image: an ndarray for a single-layer greyscale image,
     where each element corresponds to a pixel.
     :return: A contrast stretched ndarray
+
     """
 
     p2, p98 = np.percentile(image, (5, 95))
@@ -41,11 +48,13 @@ def contrast_stretch(image):
 
 def log_compression(image):
     """
-       Performs log compression on input image
-       :param image: an ndarray for a single-layer greyscale image,
-       where each element corresponds to a pixel.
-       :return: A log-compressed ndarray
-       """
+    Performs log compression on input image
+
+    :param image: an ndarray for a single-layer greyscale image,
+    where each element corresponds to a pixel.
+    :return: A log-compressed ndarray
+
+    """
 
     c = 255 / math.log(1+np.amax(image))
     image_log = c*np.log(image + 1)
@@ -55,11 +64,13 @@ def log_compression(image):
 
 def rev_vid(image):
     """
-       Performs reverse video filter on input image
-       :param image: an ndarray for a single-layer greyscale image,
-       where each element corresponds to a pixel.
-       :return: An ndarray that is the reverse video of input
-       """
+    Performs reverse video filter on input image
+
+    :param image: an ndarray for a single-layer greyscale image,
+    where each element corresponds to a pixel.
+    :return: An ndarray that is the reverse video of input
+
+    """
     inverted = 255 - image
 
     return(inverted)
@@ -67,11 +78,13 @@ def rev_vid(image):
 
 def image_size(image):
     """
-       Returns image dimensions of input
-       :param image: an ndarray for a single-layer greyscale image,
-       where each element corresponds to a pixel.
-       :return: Tuple of array dimensions
-       """
+    Returns image dimensions of input
+
+    :param image: an ndarray for a single-layer greyscale image,
+    where each element corresponds to a pixel.
+    :return: Tuple of array dimensions
+
+    """
 
     size = np.shape(image)
 
@@ -80,11 +93,13 @@ def image_size(image):
 
 def histo(image, case):
     """
-       Returns base 64 encoded jpg image of histogram plot for image
-       :param image: an ndarray for a single-layer greyscale image,
-       where each element corresponds to a pixel.
-       :return: A base64 encoded jpg image of histogram plot
-       """
+    Returns base 64 encoded jpg image of histogram plot for image
+
+    :param image: an ndarray for a single-layer greyscale image,
+    where each element corresponds to a pixel.
+    :return: A base64 encoded jpg image of histogram plot
+
+    """
     plt.clf()
     H, bins = np.histogram(image, bins='auto', density=True)
     plt.bar(bins[:-1], H, width=1)
@@ -110,8 +125,10 @@ def histo(image, case):
 def encode_image_string(filename):
     """
     Returns the base64 encoded string for an image file
+
     :param filename: image file to base64 encode
     :return: base64 string for image
+
     """
     with open(filename, "rb") as image_file:
         image_string = base64.b64encode(image_file.read())
@@ -121,8 +138,10 @@ def encode_image_string(filename):
 def decode_image_string(image_string):
     """
     Creates a png image file of base64 encoded string
+
     :param image_string: base64 encoded string of image
     :return: Creates a png image file of encoded string
+
     """
     imgdata = base64.b64decode(image_string)
     filename = 'image'
@@ -134,12 +153,15 @@ def decode_image_string(image_string):
 def unpack_zip(zip_string):
     """
     Creates an array of base64 encoded image strings
-     from a base64 encoded zip file
+    from a base64 encoded zip file
+
     :param zip_string: A base64 encoded zip file
     that contains images
     :return: An array of base64 encoded strings
     corresponding to each image
+
     """
+
     decoded = base64.b64decode(zip_string)
     if os.path.exists('strings.zip'):
         os.remove('strings.zip')
@@ -169,8 +191,10 @@ def return_image_strings(b64_array):
     Returns an array of b64 encoded image strings, without headers,
     from 1 of 2 inputs.  Either an array of base64 encoded
     strings or a base64 encoded zipfile.
+
     :param b64_array: an array of base64 strings
     :return: an array of b64 encoded image strings.
+
     """
 
     if b64_array[0][0:10] == "data:image":
@@ -190,11 +214,13 @@ def resave_image(image_strings, ftype):
     Returns a base64 encoding of a single image or
     zipfile of images, with a header, that are saved as a
     specified file type
+
     :param image_strings: An array of base64 encoded image strings
     :param ftype: A string that specifies what filetype the user wants
      the files saved as (jpg, tiff, png...)
     :return: base64 encoded zip archive of images or a
     single base64 encoded image
+
     """
 
     if len(image_strings) == 1:
@@ -249,6 +275,7 @@ def add_header(image_string):
     :param image_string: A base64 encoded image string
     without a header
     :return: A base64 encoded string with a jpg header
+
     """
     image_string = str(image_string)[2:]
     image_string_with_head = "data:image/jpeg;charset=utf-8;base64,"+str(image_string)
@@ -258,18 +285,20 @@ def add_header(image_string):
 def run_process(image_string, filters):
 
     """
-       Runs selected filters on input image
-       :param image_string: base64 encoding of image file
-       :param filters: an array that corresponds to
-       what filters the user selected
-       :raises TypeError: If image input is not an image file
-       :raises TypeError: If image_string is not a base64 string
-       :return image_filt_string: A base64 encoding of the filtered jpg image
-       :return image_prefilt_string: A base64 encoding of greyscale, input jpg image
-       :return im_size: A tuple with dimensions of input image
-       :return histo_pre: The histogram arrays for the image pre-processing
-       :return histo_post: The histogram arrays for the image post-processing
-       """
+    Runs selected filters on input image
+
+    :param image_string: base64 encoding of image file
+    :param filters: an array that corresponds to
+    what filters the user selected
+    :raises TypeError: If image input is not an image file
+    :raises TypeError: If image_string is not a base64 string
+    :return image_filt_string: A base64 encoding of the filtered jpg image
+    :return image_prefilt_string: A base64 encoding of greyscale, input jpg image
+    :return im_size: A tuple with dimensions of input image
+    :return histo_pre: The histogram arrays for the image pre-processing
+    :return histo_post: The histogram arrays for the image post-processing
+
+    """
 
     try:
         decode_image_string(image_string)
@@ -312,7 +341,7 @@ def main():
     imstring = encode_image_string('lion.jpg')
     imstring2 = encode_image_string('lion.jpg')
 
-    zip_string = resave_image([imstring, imstring2], "tiff")
+    zip_string = resave_image([imstring], "tiff")
     #image_strings = unpack_zip(zip_string)
     #decode_image_string(image_strings[0])
     #post, pre, im_size, histopre, histopost = run_process(imstring, [0,0,1,0])
