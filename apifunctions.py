@@ -5,7 +5,8 @@ import uuid
 
 def existing_user_metrics(email, functions):
     """
-    Update user metrics with new function calls for existing user
+    Update user metrics with new function calls for existing user.
+
     :param email: username input from user (string)
     :param functions: image processing functions chosen by user (1x4 array)
     :return: save updated user metrics (1x4 array) and current timestamp
@@ -20,7 +21,8 @@ def existing_user_metrics(email, functions):
 
 def new_user_metrics(email, functions):
     """
-    Store initial user metrics for new user
+    Store initial user metrics for new user.
+
     :param email: username input from user (string)
     :param functions: image processing functions chosen by user (1x4 array)
     :return: save new username (string) with initial function metrics (1x4
@@ -33,7 +35,8 @@ def new_user_metrics(email, functions):
 
 def get_user_metrics(email):
     """
-    Get user metrics for a given user
+    Get user metrics for a given user.
+
     :param email: username input from user (string)
     :return: array of function metrics for that user (1x4 array) and last
     timestamp when array was updated (datetime object)
@@ -51,6 +54,7 @@ def store_uploads(em, orig, up_time, funcs, proc, o_histogram,
      batch in the case that one user uploads multiple batches. Save original
      and processed images and original and processed image histograms to local
      machine using :func:`save_files`.
+
     :param em: username input from user (string)
     :param orig: original images encoded in base64 (array of strings)
     :param up_time: timestamp when original images were uploaded (datetime
@@ -87,6 +91,7 @@ def get_latest_batch(email):
     """
     Find the most recent image batch in database for a given user and extract
     the field containing paths to processed image files.
+
     :param email: username input (string)
     :return: paths to processed image files (array of strings)
     """
@@ -103,6 +108,7 @@ def save_files(images):
     """
     Save encoded image to image file on local machine. Image is decoded and
     saved as JPEG file with UUID name in "imstore" directory.
+
     :param images: encoded image string (string)
     :return: file name of stored image (string)
     """
@@ -123,6 +129,7 @@ def get_files(email):
     """
     Get files that are stored on local machine in "imstore" directory. Locate
     them using file names that are stored in the Image Batch object.
+
     :param email: username input (string)
     :return: encoded processed images (array of strings)
     """

@@ -27,6 +27,7 @@ def main_task():
     images are processed.  Store original and processed images on local machine
     and store their paths and metadata in database via
     :funcs:`api.store_uploads`.
+
     :return: JSON containing original images, processed images, original image
     histograms, processed image histograms, image sizes, uploaded timestamp,
     post-processing timestamp; functions selected by user; user metrics
@@ -109,6 +110,7 @@ def download_task():
     :func:`~api.get_files`.  Use :func:`IP_Functions.resave_image` to convert
     images to correct format encoded in base64 and to put images in ZIP archive
      if there is more than one image to be returned.
+     
     :return: base64 encoded images in correct format (JSON)
     """
     s = request.get_json()
