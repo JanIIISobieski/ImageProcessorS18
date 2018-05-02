@@ -1,5 +1,6 @@
 pymodm
 flask
+flask_cors
 pytest
 requests
 pytest-pep8

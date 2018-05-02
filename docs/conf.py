@@ -128,7 +128,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'ImageProcessorFinalProject.tex', 'Image Processor Final Project Documentation',
+    (master_doc, 'ImageProcessorFinalProject.tex',
+     'Image Processor Final Project Documentation',
      'Eitan August, Gabriel Antoniak and Stephanie Hatz', 'manual'),
 ]
 
@@ -138,7 +139,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'imageprocessorfinalproject', 'Image Processor Final Project Documentation',
+    (master_doc, 'imageprocessorfinalproject',
+     'Image Processor Final Project Documentation',
      [author], 1)
 ]
 
@@ -149,7 +151,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'ImageProcessorFinalProject', 'Image Processor Final Project Documentation',
+    (master_doc, 'ImageProcessorFinalProject',
+     'Image Processor Final Project Documentation',
      author, 'ImageProcessorFinalProject', 'One line description of project.',
      'Miscellaneous'),
 ]

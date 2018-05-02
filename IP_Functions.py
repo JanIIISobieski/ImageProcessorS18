@@ -12,7 +12,6 @@ import zipfile
 from PIL import Image
 
 
-
 def histo_equal(image):
     """
     Performs histogram equalization on input image.
@@ -278,7 +277,7 @@ def add_header(image_string):
 
     """
     image_string = str(image_string)[2:]
-    image_string_with_head = "data:image/jpeg;charset=utf-8;base64,"+str(image_string)
+    image_string_with_head = "data:image/jpeg;base64,"+str(image_string)
     return (image_string_with_head)
 
 
@@ -293,7 +292,8 @@ def run_process(image_string, filters):
     :raises TypeError: If image input is not an image file
     :raises TypeError: If image_string is not a base64 string
     :return image_filt_string: A base64 encoding of the filtered jpg image
-    :return image_prefilt_string: A base64 encoding of greyscale, input jpg image
+    :return image_prefilt_string: A base64 encoding of greyscale,
+    input jpg image
     :return im_size: A tuple with dimensions of input image
     :return histo_pre: The histogram arrays for the image pre-processing
     :return histo_post: The histogram arrays for the image post-processing
@@ -334,7 +334,8 @@ def run_process(image_string, filters):
     image_filt_string = encode_image_string('postfilt.jpg')
     os.remove('postfilt.jpg')
 
-    return image_filt_string, image_prefilt_string, im_size, histo_pre, histo_post
+    return image_filt_string, image_prefilt_string,\
+        im_size, histo_pre, histo_post
 
 
 def main():
@@ -342,9 +343,6 @@ def main():
     imstring2 = encode_image_string('lion.jpg')
 
     zip_string = resave_image([imstring], "tiff")
-    #image_strings = unpack_zip(zip_string)
-    #decode_image_string(image_strings[0])
-    #post, pre, im_size, histopre, histopost = run_process(imstring, [0,0,1,0])
 
 
 if __name__ == "__main__":
