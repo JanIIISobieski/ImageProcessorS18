@@ -125,7 +125,7 @@ def decode_image_string(image_string):
     :return: Creates a png image file of encoded string
     """
     imgdata = base64.b64decode(image_string)
-    filename = 'image.png'
+    filename = 'image'
     with open(filename, 'wb') as f:
         f.write(imgdata)
     return
@@ -199,12 +199,12 @@ def resave_image(image_strings, ftype):
 
     if len(image_strings) == 1:
         decode_image_string(image_strings[0])
-        img = Image.open('image.png')
+        img = Image.open('image')
         img.save('image.'+ftype)
         encoded_1 = encode_image_string('image.'+ftype)
         encoded_1 = str(encoded_1)[2:]
         encoded_1 = "data:image/"+ftype+";base64," + str(encoded_1)
-        os.remove('image.png')
+        os.remove('image')
         os.remove('image.'+ftype)
         return encoded_1
     else:
@@ -220,9 +220,9 @@ def resave_image(image_strings, ftype):
             except TypeError:
                 print('base64 string expected')
 
-            img = Image.open('image.png')
+            img = Image.open('image')
             img.save('tmp1/image'+str(i)+'.'+ftype)
-            os.remove('image.png')
+            os.remove('image')
             i = i + 1
 
         if os.path.exists("zipped_"+ftype+"_images.zip"):
@@ -277,8 +277,8 @@ def run_process(image_string, filters):
         print('base64 string expected')
 
     try:
-        im_array = misc.imread('image.png', flatten=True)
-        os.remove('image.png')
+        im_array = misc.imread('image', flatten=True)
+        os.remove('image')
     except TypeError:
         print('Image file expected')
 
@@ -313,10 +313,9 @@ def main():
     imstring2 = encode_image_string('lion.jpg')
 
     zip_string = resave_image([imstring, imstring2], "tiff")
-    print(zip_string[0:50])
-    #image_strings = unpack_zip(zip_string)
-    #decode_image_string(image_strings[0])
-    #post, pre, im_size, histopre, histopost = run_process(imstring, [0,0,1,0])
+    image_strings = unpack_zip(zip_string)
+    decode_image_string(image_strings[0])
+    post, pre, im_size, histopre, histopost = run_process(imstring, [0,0,1,0])
 
 
 if __name__ == "__main__":
