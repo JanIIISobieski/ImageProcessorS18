@@ -16,9 +16,15 @@ class App extends React.Component {
             length_array: 0,
             all_image_array: '',
             data_received: {
-                email: '',
                 functions: '',
-                originals: '',
+                o_hist: '',
+                original: '',
+                processed: '',
+                p_hist: '',
+                ret_time: '',
+                size: ['', ''],
+                up_time: '',
+                user_metrics: '',
             },
         };
     }
@@ -46,13 +52,6 @@ class App extends React.Component {
             this.setState({bad_files: false})
         }
         this.setState({all_image_array: []});
-        this.setState({data_received:
-                {
-                    email: '',
-                    functions: '',
-                    originals: '',
-                }
-        });
         acceptedImages.forEach(file => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -70,7 +69,7 @@ class App extends React.Component {
     };
 
     postRequest = (event, func_array) => {
-        var address = 'http://67.159.95.29:3000/api/process_images';
+        var address = 'http://67.159.95.29:5000/api/process_images';
         var chosen_func = [0, 0, 0, 0];
         func_array.forEach(element => {
            chosen_func[element] = 1
@@ -81,13 +80,15 @@ class App extends React.Component {
             'originals': this.state.all_image_array,
             'functions': chosen_func
         };
+
         console.log({'post_request': [address, json]});
         axios.post(address, json)
             .then((response) => {
-                console.log({'axios_response': response});
-                this.setState({
-                    data_received: response.data
-                })
+                console.log({'axios': response});
+                console.log({'state_data': this.state.data_received});
+                this.setState({data_received: response.data},
+                    () => console.log(this.state.data_received)
+                )
             })
     };
 

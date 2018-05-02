@@ -28,7 +28,7 @@ class RadioButtonsGroup extends React.Component {
     };
 
     sendRequest = () => {
-        var img = this.props.recieved.originals[0];
+        var img = this.props.recieved.processed[0];
         var ending = this.state.value;
         var filename = 'processed';
         var mime_string = '';
@@ -58,7 +58,7 @@ class RadioButtonsGroup extends React.Component {
                             value={this.state.value}
                             onChange={this.handleChange}
                         >
-                            <FormControlLabel value="jpg" control={<Radio />} label="JPEG" />
+                            <FormControlLabel value="jpeg" control={<Radio />} label="JPEG" />
                             <FormControlLabel value="png" control={<Radio />} label="PNG" />
                             <FormControlLabel value="tiff" control={<Radio />} label="TIFF" />
                         </RadioGroup>

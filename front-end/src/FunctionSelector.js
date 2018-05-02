@@ -7,7 +7,7 @@ class FunctionSelector extends React.Component {
     constructor(){
         super();
         this.state = {
-            checked: [0]
+            checked: [2]
         };
     }
 
@@ -30,7 +30,7 @@ class FunctionSelector extends React.Component {
     };
 
     render(){
-        const function_names = ['Log Compression', 'Contrast Stretch', 'Histogram Equalization', 'Reverse Video'];
+        const function_names = ['Histogram Equalization', 'Contrast Stretch', 'Log Compression', 'Reverse Video'];
 
         return (
             <div className='center'>

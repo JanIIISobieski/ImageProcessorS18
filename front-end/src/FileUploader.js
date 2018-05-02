@@ -32,7 +32,9 @@ class FileUploader extends React.Component {
     onLeftButtonClick = (event) => {
         this.setState({image_select: Math.abs(
             this.nonZeroDecrement(this.state.image_select, this.props.length)) % this.props.length},
-            () => console.log({'image_select': this.state.image_select}));
+            () => {
+                console.log({'image_select': this.state.image_select});
+            });
     };
 
     onRightButtonClick = (event) => {
@@ -75,8 +77,9 @@ class FileUploader extends React.Component {
             </section>
                 <div className='image_adjacent'>
                     <img src={this.props.all_image_array[this.state.image_select]}/>
-                    <img src={this.props.processed_data.originals[this.state.image_select]}/>
+                    <img src={this.props.processed_data.processed[this.state.image_select]}/>
                 </div>
+                Size of Image {this.props.processed_data.size[this.state.image_select][0]} x {this.props.processed_data.size[this.state.image_select][1]}
             </div>
         );
     }
