@@ -1,0 +1,41 @@
+.outer {
+    background: lightblue;
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
+.image_background {
+    background: whitesmoke;
+    height: 40%;
+    width: 90%;
+    margin-outside: 75px;
+    margin: 0 auto;
+}
+
+.center {
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.image_adjacent {
+    display: flex;
+    flex-direction: row;
+    width: 90%;
+    max-height: 500px;
+    margin: 0 auto;
+}
+
+.functions_adjacent {
+    display: flex;
+    flex-direction: row;
+    width: 40%;
+    margin: 0 auto;
+}
+
+img {
+    max-width: 500px;
+    height: auto;
+    object-fit: contain;
+}
