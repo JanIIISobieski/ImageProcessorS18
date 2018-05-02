@@ -50,7 +50,6 @@ def main_task():
             p_histogram = []
             for pic in originals:
                 outputs = IP_Functions.run_process(pic, functions)
-                app.logger.debug('anything?')
                 processed.append(outputs[0])
                 orig_gray.append(outputs[1])
                 size.append(outputs[2])
@@ -58,17 +57,12 @@ def main_task():
                 p_histogram.append(outputs[4])
             ret_time = datetime.datetime.now()
 
-            batch = []
-            for i, pic in enumerate(originals):
-                im = {}
-                im["original"] = IP_Functions.add_header(orig_gray[i])
-                im["processed"] = IP_Functions.add_header(processed[i])
-                im["original_histogram"] = \
-                    IP_Functions.add_header(o_histogram[i])
-                im["processed_histogram"] = \
-                    IP_Functions.add_header(p_histogram[i])
-                im["image_size"] = size[i]
-                batch.append(im)
+            for i, pic in originals:
+                psend = IP_Functions.add_header(processed[i])
+                osend = IP_Functions.add_header(orig_gray[i])
+                ohsend = IP_Functions.add_header(o_histogram[i])
+                phsend = IP_Functions.add_header(p_histogram[i])
+
             try:
                 api.existing_user_metrics(email, functions)  # update metrics
                 #  for existing user
@@ -84,7 +78,9 @@ def main_task():
                 app.logger.error('Could not store original images in database')
                 return "Database is down", 503
             um = list(api.get_user_metrics(email))
-            return jsonify(batch=batch, up_time=up_time, ret_time=ret_time,
+            return jsonify(processed=psend, original=osend, size=size,
+                           o_hist=ohsend, p_hist=phsend,
+                           up_time=up_time, ret_time=ret_time,
                            functions=functions, user_metrics=um)
         except TypeError:
             app.logger.error('Could not process uploaded images')
@@ -98,7 +94,7 @@ def main_task():
         return "Images in wrong format", 415
 
 
-@app.route("/api/download_images", methods=["GET"])
+@app.route("/api/download_images", methods=["POST"])
 def download_task():
     """
     Receive GET request containing email (string) and picture format (string).
