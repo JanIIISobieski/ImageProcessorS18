@@ -57,11 +57,15 @@ def main_task():
                 p_histogram.append(outputs[4])
             ret_time = datetime.datetime.now()
 
-            for i, pic in originals:
-                psend = IP_Functions.add_header(processed[i])
-                osend = IP_Functions.add_header(orig_gray[i])
-                ohsend = IP_Functions.add_header(o_histogram[i])
-                phsend = IP_Functions.add_header(p_histogram[i])
+            psend = []
+            osend = []
+            ohsend = []
+            phsend = []
+            for i, pic in enumerate(originals):
+                psend.append(IP_Functions.add_header(processed[i]))
+                osend.append(IP_Functions.add_header(orig_gray[i]))
+                ohsend.append(IP_Functions.add_header(o_histogram[i]))
+                phsend.append(IP_Functions.add_header(p_histogram[i]))
 
             try:
                 api.existing_user_metrics(email, functions)  # update metrics
@@ -83,15 +87,16 @@ def main_task():
                            up_time=up_time, ret_time=ret_time,
                            functions=functions, user_metrics=um)
         except TypeError:
-            app.logger.error('Could not process uploaded images')
-            return "Processing of images failed", 422
+            app.logger.error('Type error arose when processing images')
+            return "Processing of images failed, wrong type", 422
         except:
             app.logger.error('Could not process')
             return "Process failed", 422
     except TypeError:
-        app.logger.error('Did not receive image encoded in base64')  # Image not
-        # uploaded or image encoded incorrectly
-        return "Images in wrong format", 415
+        app.logger.error('Could not receive images or could not remove base64 '
+                         'image header')  # Image not uploaded or image encoded
+        #  incorrectly
+        return "Images not received or in wrong format", 415
 
 
 @app.route("/api/download_images", methods=["POST"])
