@@ -109,8 +109,8 @@ def download_task():
     (string). Get array of paths for processed images using
     :func:`~api.get_files`.  Use :func:`IP_Functions.resave_image` to convert
     images to correct format encoded in base64 and to put images in ZIP archive
-     if there is more than one image to be returned.
-     
+    if there is more than one image to be returned.
+
     :return: base64 encoded images in correct format (JSON)
     """
     s = request.get_json()
