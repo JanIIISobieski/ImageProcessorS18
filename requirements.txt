@@ -4,7 +4,6 @@ flask
 flask_cors
 uuid
 pytest
-base64
 requests
 pytest-pep8
 scikit-image
