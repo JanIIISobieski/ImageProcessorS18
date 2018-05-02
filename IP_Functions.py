@@ -251,7 +251,7 @@ def add_header(image_string):
     :return: A base64 encoded string with a jpg header
     """
     image_string = str(image_string)[2:]
-    image_string_with_head = "data:image/jpg;base64,"+str(image_string)
+    image_string_with_head = "data:image/jpeg;base64,"+str(image_string)
     return (image_string_with_head)
 
 
