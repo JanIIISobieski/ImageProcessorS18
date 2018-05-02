@@ -1,9 +1,7 @@
 from pymodm import connect,errors
-import models
 import datetime
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-import logging
 import apifunctions as api
 import IP_Functions
 
@@ -17,17 +15,21 @@ CORS(app)
 def main_task():
     """
     Receive POST request containing an email (string), image processing
-    functions (array), and base64 encoded image(s) (array).  Initialize new
-    user or find existing user in database and update user metrics (number of
-    times functions were called) along with current time.  Process images
-    according to functions chosen by user, and return metadata including
-    histograms of original and processed images and sizes of original and
-    processed images.  Log time when images are uploaded and after images are
-    processed.  Store original and processed images on local machine and
-    store their paths in database, along with associated metadata.
-    :return: Original images, histograms, and sizes; processed images,
-    histograms, and sizes; uploaded time; post-processing time; functions
-    selected by user; user metrics (JSON)
+    functions (array), and base64 encoded image(s) (array).  If images are
+    contained in ZIP archive, extract with
+    :func:`IP_Functions.return_image_strings`.
+    :func:`IP_Functions.run_process` processes images according to functions
+    chosen by user, and returns metadata including histograms of original and
+    processed images and image sizes.  Add base64 headers to image and
+    histogram outputs.  Initialize new user or find existing user in database
+    and update user metrics (number of times functions were called) along with
+    current timestamp.  Log timestamps when images are uploaded and after
+    images are processed.  Store original and processed images on local machine
+    and store their paths and metadata in database via
+    :funcs:`api.store_uploads`.
+    :return: JSON containing original images, processed images, original image
+    histograms, processed image histograms, image sizes, uploaded timestamp,
+    post-processing timestamp; functions selected by user; user metrics
     """
     s = request.get_json()
     email = s["email"]
@@ -102,10 +104,11 @@ def main_task():
 @app.route("/api/download_images", methods=["POST"])
 def download_task():
     """
-    Receive GET request containing email (string) and picture format (string).
-    Get array of encoded images (most recently uploaded) for user and convert
-    images to correct format encoded in base64. Put images in ZIP archive if
-    there is more than one to be returned.
+    Receive POST request containing username (string) and picture format
+    (string). Get array of paths for processed images using
+    :func:`~api.get_files`.  Use :func:`IP_Functions.resave_image` to convert
+    images to correct format encoded in base64 and to put images in ZIP archive
+     if there is more than one image to be returned.
     :return: base64 encoded images in correct format (JSON)
     """
     s = request.get_json()

@@ -7,9 +7,9 @@ def existing_user_metrics(email, functions):
     """
     Update user metrics with new function calls for existing user
     :param email: username input from user (string)
-    :param functions: image processing functions chosen by user (array)
-    :return: save updated user metrics (array) and current time (datetime
-    object) in existing database user object
+    :param functions: image processing functions chosen by user (1x4 array)
+    :return: save updated user metrics (1x4 array) and current timestamp
+    (datetime object) in existing user object
     """
     u = models.User.objects.raw({"_id": email}).first()
     for i, n in enumerate(u.metrics):
@@ -22,9 +22,9 @@ def new_user_metrics(email, functions):
     """
     Store initial user metrics for new user
     :param email: username input from user (string)
-    :param functions: image processing functions chosen by user (array)
-    :return: save new user (string) with initial function metrics (array) and
-    current time (datetime object) in database user object
+    :param functions: image processing functions chosen by user (1x4 array)
+    :return: save new username (string) with initial function metrics (1x4
+    array) and current timestamp (datetime object) in new user object
     """
     u = models.User(email=email, metrics=functions,
                     time=datetime.datetime.now())
@@ -33,32 +33,36 @@ def new_user_metrics(email, functions):
 
 def get_user_metrics(email):
     """
-    Get user metrics for a given email
+    Get user metrics for a given user
     :param email: username input from user (string)
-    :return: array of function metrics for that user (array) and last time
-    array was updated (datetime object)
+    :return: array of function metrics for that user (1x4 array) and last
+    timestamp when array was updated (datetime object)
     """
     u = models.User.objects.raw({"_id": email}).first()
     return u.metrics, u.time
 
 
-# store all image batch data in database
 def store_uploads(em, orig, up_time, funcs, proc, o_histogram,
                   p_histogram, sz, ret_time):
     """
-    Store functions and paths to original images in database image batch
-    :param email: username input from user (string)
-    :param originals: original images encoded in base64 (array)
-    :param up_time: time at which original images were uploaded (datetime
+    Store username, functions, image sizes, upload timestamp, post-processing
+     timestamp, and paths to original and processed images and original and
+     processed image histograms in image batch.  Assign UUID to identify image
+     batch in the case that one user uploads multiple batches. Save original
+     and processed images and original and processed image histograms to local
+     machine using :func:`save_files`.
+    :param em: username input from user (string)
+    :param orig: original images encoded in base64 (array of strings)
+    :param up_time: timestamp when original images were uploaded (datetime
     object)
-    :param functions: image processing functions chosen by user (array)
-    :param processed: processed images encoded in base64 (array)
-    :param o_histogram: histograms of original images (array of arrays)
-    :param p_histogram: histograms of processed images (array of arrays)
-    :param size: sizes of original images (array)
-    :param ret_time: post-processing time (datetime object)
-    :return: save array of paths to local image directories in database image
-    batch object
+    :param funcs: image processing functions chosen by user (1x4 array)
+    :param proc: processed images encoded in base64 (array of strings)
+    :param o_histogram: histograms of original images (array of strings)
+    :param p_histogram: histograms of processed images (array of strings)
+    :param sz: sizes of original images (array of 1x2 tuples)
+    :param ret_time: post-processing timestamp (datetime object)
+    :return: save all non-image inputs and paths to image files in image batch
+    object, and save image files to local machine
     """
     label = uuid.uuid1()
     b = models.ImageBatch(label, em, funcs, up_time, ret_time,
@@ -81,9 +85,10 @@ def store_uploads(em, orig, up_time, funcs, proc, o_histogram,
 
 def get_latest_batch(email):
     """
-    Get the most recent image batch in database for a given user
+    Find the most recent image batch in database for a given user and extract
+    the field containing paths to processed image files.
     :param email: username input (string)
-    :return: image batch object from database
+    :return: paths to processed image files (array of strings)
     """
     a = list(models.ImageBatch.objects.raw({'email': email}))
     times = []
@@ -96,10 +101,10 @@ def get_latest_batch(email):
 
 def save_files(images):
     """
-    Save encoded images to image files on local machine. Images will be saved
-    as JPEG files with UUID names in "imstore" directory.
-    :param images: array of encoded images
-    :return: array of file names for stored images
+    Save encoded image to image file on local machine. Image is decoded and
+    saved as JPEG file with UUID name in "imstore" directory.
+    :param images: encoded image string (string)
+    :return: file name of stored image (string)
     """
     import uuid
     import base64
@@ -119,7 +124,7 @@ def get_files(email):
     Get files that are stored on local machine in "imstore" directory. Locate
     them using file names that are stored in the Image Batch object.
     :param email: username input (string)
-    :return: array of encoded images (post-processing)
+    :return: encoded processed images (array of strings)
     """
     import base64
     import os
