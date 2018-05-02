@@ -315,13 +315,3 @@ def run_process(image_string, filters):
 
     return image_filt_string, image_prefilt_string,\
         im_size, histo_pre, histo_post
-
-
-def main():
-    imstring = encode_image_string('lion.jpg')
-    imstring2 = encode_image_string('lion.jpg')
-    zip_string = resave_image([imstring], "tiff")
-
-
-if __name__ == "__main__":
-    main()
