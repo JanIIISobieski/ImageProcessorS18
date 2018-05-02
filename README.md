@@ -12,7 +12,7 @@ It covers the performance at the point of submission.
 Documentation for the service is available [here](http://image-processor-final-project.readthedocs.io/en/latest/).
 
 ## Use
-The service can be accessed at [this link](vcm-3602.vm.duke.edu:3000).
+The service can be accessed at [this link](http://vcm-3602.vm.duke.edu:3000).
 The user can only import images in PNG, JPEG, or TIFF format, or the user may upload a ZIP archive containing images in one of these formats.
 A valid ID tag (any string) must be provided to the User ID space and images must be uploaded or no processing request can be sent.
 Up to four functions can be selected. The order in which they are performed on the image is in the order in which they are
