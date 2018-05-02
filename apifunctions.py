@@ -60,8 +60,8 @@ def store_uploads(em, orig, up_time, funcs, proc, o_histogram,
     :return: save array of paths to local image directories in database image
     batch object
     """
-    import pytest
-    b = models.ImageBatch(uuid.uuid1(), em, funcs, up_time, ret_time,
+    label = uuid.uuid1()
+    b = models.ImageBatch(label, em, funcs, up_time, ret_time,
                           [], [], [], [], [])
     for i, pic in enumerate(orig):
         a1 = save_files(pic)
@@ -76,7 +76,7 @@ def store_uploads(em, orig, up_time, funcs, proc, o_histogram,
         b.size0.append(tempsize[0])
         b.size1.append(tempsize[1])
     b.save()
-    return b.identifier
+    return label
 
 
 def get_latest_batch(email):
@@ -90,7 +90,7 @@ def get_latest_batch(email):
     for i in a:
         times.append(i.ret_time)
     recent = max(times)
-    b = models.ImageBatch.objects.raw({'ret_time': recent})
+    b = models.ImageBatch.objects.get({'ret_time': recent})
     return b.p_image
 
 
@@ -126,7 +126,7 @@ def get_files(email):
 
     im_strings = []
     batch = get_latest_batch(email)
-    for pic in batch.p_image:
+    for pic in batch:
         pathname = os.path.join('imstore/', pic)
         with open(pathname, 'rb') as file:
             img = file.read()
