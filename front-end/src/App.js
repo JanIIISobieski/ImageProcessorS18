@@ -3,6 +3,7 @@ import FileUploader from './FileUploader.js';
 import AppHeader from './AppHeader.js'
 import FunctionSelector from './FunctionSelector';
 import Downloader from './Downloader'
+import UserMetrics from './UserMetrics'
 import axios from 'axios'
 import './App.css';
 
@@ -24,7 +25,7 @@ class App extends React.Component {
                 ret_time: '',
                 size: ['', ''],
                 up_time: '',
-                user_metrics: '',
+                user_metrics: [['', '', '', ''], ''],
             },
         };
     }
@@ -123,6 +124,9 @@ class App extends React.Component {
                         />
                     </div>
                 </div>
+                <UserMetrics
+                    data={this.state.data_received}
+                />
             </div>
         );
     }

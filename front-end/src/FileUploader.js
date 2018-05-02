@@ -79,6 +79,10 @@ class FileUploader extends React.Component {
                     <img src={this.props.all_image_array[this.state.image_select]}/>
                     <img src={this.props.processed_data.processed[this.state.image_select]}/>
                 </div>
+                <div className='image_adjacent'>
+                    <img src={this.props.processed_data.o_hist[this.state.image_select]}/>
+                    <img src={this.props.processed_data.p_hist[this.state.image_select]}/>
+                </div>
                 Size of Image {this.props.processed_data.size[this.state.image_select][0]} x {this.props.processed_data.size[this.state.image_select][1]}
             </div>
         );
