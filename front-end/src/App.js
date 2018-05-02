@@ -23,7 +23,7 @@ class App extends React.Component {
                 processed: '',
                 p_hist: '',
                 ret_time: 'No info yet',
-                size: ['', ''],
+                size: [['', '']],
                 up_time: 'No info yet',
                 user_metrics: [['0', '0', '0', '0'], ''],
             },
@@ -31,9 +31,7 @@ class App extends React.Component {
     }
 
     validateEmail = (email) => {
-        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        var testVal = !re.test(String(email).toLowerCase());
-        console.log({'bad_email': testVal});
+        var testVal = email == '';
         return testVal
     };
 
@@ -62,7 +60,8 @@ class App extends React.Component {
                 this.setState({all_image_array: joined},
                     () => {
                         this.setState({length_array: this.state.all_image_array.length},
-                            () => {console.log({'length_array': this.state.length_array})});
+                            () => {console.log({'length_array': this.state.length_array});
+                        });
                         console.log({'all_images': this.state.all_image_array});
                     });
             };

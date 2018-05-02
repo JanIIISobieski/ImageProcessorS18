@@ -34,18 +34,7 @@ class UserMetrics extends React.Component{
     };
 
     render() {
-        var data = [];
-        if (this.props.data.user_metrics[0].length < 4){
-            data = {
-                up_time: '',
-                ret_time: '',
-                user_metrics: ['', '', '', '']
-            }
-        } else{
-            data = this.props.data
-        }
         const table_body = this.makeTable(this.props.data);
-
         return(
             <div>
                 <Table>

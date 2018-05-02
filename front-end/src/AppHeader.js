@@ -40,7 +40,7 @@ class AppHeader extends React.Component{
                         </Typography>
                         <TextField
                             id='e-mail_input'
-                            label='User E-mail'
+                            label='User ID'
                             defaultValue={this.props.email}
                             onChange={this.onTextFieldChange}
                             error={this.props.bad_email}

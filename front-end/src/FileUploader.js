@@ -13,7 +13,7 @@ class FileUploader extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            image_select: 0
+            image_select: 0,
         }
     }
 
@@ -39,7 +39,31 @@ class FileUploader extends React.Component {
 
     onRightButtonClick = (event) => {
         this.setState({image_select: Math.abs(this.state.image_select + 1) % this.props.length},
-            () => console.log({'image_select': this.state.image_select}));
+            () => {
+                console.log({'image_select': this.state.image_select})
+                console.log({'image_selector': this.selectIndex()});
+            });
+    };
+
+    selectIndex = () => {
+        var index = 0;
+        console.log({'boolean_process': this.props.processed_data.functions === ''});
+        if (this.props.processed_data.functions === ''){
+            index = 0;
+        } else {
+            index = this.state.image_select;
+        }
+        return index
+    };
+
+    writeImageSize = () => {
+        var size = ['', ''];
+        if (this.props.processed_data.functions === '') {
+            size = ['', '']
+        } else {
+            size = this.props.processed_data.size[this.state.image_select]
+        }
+        return size
     };
 
     render() {
@@ -75,18 +99,18 @@ class FileUploader extends React.Component {
                         Next Image
                     </Button>
                     <div className='center'>
-                        Image size: {this.props.processed_data.size[this.state.image_select][0]}
-                        x {this.props.processed_data.size[this.state.image_select][1]}
+                        Image size: {this.writeImageSize()[0]}
+                        x {this.writeImageSize()[1]}
                     </div>
                 </div>
             </section>
                 <div className='image_adjacent'>
                     <img src={this.props.all_image_array[this.state.image_select]}/>
-                    <img src={this.props.processed_data.processed[this.state.image_select]}/>
+                    <img src={this.props.processed_data.processed[this.selectIndex]}/>
                 </div>
                 <div className='image_adjacent'>
-                    <img src={this.props.processed_data.o_hist[this.state.image_select]}/>
-                    <img src={this.props.processed_data.p_hist[this.state.image_select]}/>
+                    <img src={this.props.processed_data.o_hist[this.selectIndex]}/>
+                    <img src={this.props.processed_data.p_hist[this.selectIndex]}/>
                 </div>
             </div>
         );

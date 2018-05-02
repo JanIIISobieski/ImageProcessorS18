@@ -30,7 +30,7 @@ class RadioButtonsGroup extends React.Component {
     };
 
     sendRequest = () => {
-        var address = 'http://67.159.95.29:5000/api/process_images';
+        var address = 'http://67.159.95.29:5000/api/download_images';
         var format = [];
 
         if (this.state.value === 'jpg'){
@@ -40,7 +40,7 @@ class RadioButtonsGroup extends React.Component {
         }
 
         var json = {
-            'email': this.state.email,
+            'email': this.props.email,
             'format': format
         };
 
@@ -50,23 +50,24 @@ class RadioButtonsGroup extends React.Component {
                 console.log({'axios_download': response});
                 console.log({'pre_download_state': this.state.download_data});
                 this.setState({download_data: response.data},
-                    () => console.log({'post_download_state': this.state.download_data})
+                    () => {
+                        console.log({'post_download_state': this.state.download_data});
+                        var img = this.state.download_data.images;
+                        var ending = this.state.value;
+                        var filename = 'processed';
+                        var mime_string = '';
+                        if (this.props.length === 1){
+                            mime_string = mime_string.concat('image/', ending);
+                            filename = filename.concat('.', ending)
+                        } else{
+                            mime_string = mime_string.concat('application/zip');
+                            filename = filename.concat('.zip')
+                        }
+                        console.log({'download': [filename, mime_string]});
+                        download(img, filename, mime_string);
+                    }
                 )
             });
-
-        var img = this.props.recieved.processed[0];
-        var ending = this.state.value;
-        var filename = 'processed';
-        var mime_string = '';
-        if (this.props.length === 1){
-            mime_string = mime_string.concat('image/', ending);
-            filename = filename.concat('.', ending)
-        } else{
-            mime_string = mime_string.concat('application/zip');
-            filename = filename.concat('.zip')
-        }
-        console.log({'download': [filename, mime_string]});
-        download(img, filename, mime_string);
     };
 
     render() {
