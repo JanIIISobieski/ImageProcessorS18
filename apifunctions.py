@@ -1,5 +1,6 @@
 import models
 import datetime
+import uuid
 
 
 def existing_user_metrics(email, functions):
@@ -42,8 +43,8 @@ def get_user_metrics(email):
 
 
 # store all image batch data in database
-def store_uploads(email, originals, up_time, functions, processed, o_histogram,
-                  p_histogram, size, ret_time):
+def store_uploads(em, orig, up_time, funcs, proc, o_histogram,
+                  p_histogram, sz, ret_time):
     """
     Store functions and paths to original images in database image batch
     :param email: username input from user (string)
@@ -59,18 +60,23 @@ def store_uploads(email, originals, up_time, functions, processed, o_histogram,
     :return: save array of paths to local image directories in database image
     batch object
     """
-    b = models.ImageBatch(email=email)
-    b.up_time = up_time
-    b.ret_time = ret_time
-    b.functions = functions
-    for i,pic in enumerate(originals):
-        b.o_image.append(save_files(pic))
-        b.p_image.append(save_files(processed[i]))
-        b.o_hist.append(save_files(o_histogram[i]))
-        b.p_hist.append(save_files(p_histogram[i]))
-        b.size0.append(size[i][0])
-        b.size1.append(size[i][1])
+    import pytest
+    b = models.ImageBatch(uuid.uuid1(), em, funcs, up_time, ret_time,
+                          [], [], [], [], [])
+    for i, pic in enumerate(orig):
+        a1 = save_files(pic)
+        b.o_image.append(a1)
+        a2 = save_files(proc[i])
+        b.p_image.append(a2)
+        a3 = save_files(o_histogram[i])
+        b.o_hist.append(a3)
+        a4 = save_files(p_histogram[i])
+        b.p_hist.append(a4)
+        tempsize = sz[i]
+        b.size0.append(tempsize[0])
+        b.size1.append(tempsize[1])
     b.save()
+    return b.identifier
 
 
 def get_latest_batch(email):
@@ -79,10 +85,13 @@ def get_latest_batch(email):
     :param email: username input (string)
     :return: image batch object from database
     """
-    a = models.ImageBatch.objects.get({"_id": email}).all()
-    import pytest; pytest.set_trace()
-    b = a.first()
-    return b
+    a = list(models.ImageBatch.objects.raw({'email': email}))
+    times = []
+    for i in a:
+        times.append(i.ret_time)
+    recent = max(times)
+    b = models.ImageBatch.objects.raw({'ret_time': recent})
+    return b.p_image
 
 
 def save_files(images):

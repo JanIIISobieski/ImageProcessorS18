@@ -8,13 +8,15 @@ class User(MongoModel):
 
 
 class ImageBatch(MongoModel):
-    email = fields.CharField(primary_key=True)
+    identifier = fields.CharField(primary_key=True)
+    email = fields.CharField()
+    functions = fields.ListField(fields.IntegerField())
+    up_time = fields.DateTimeField()
+    ret_time = fields.DateTimeField()
     o_image = fields.ListField(fields.CharField())
     p_image = fields.ListField(fields.CharField())
-    up_time = fields.DateTimeField()
-    functions = fields.ListField(fields.IntegerField())
     o_hist = fields.ListField(fields.CharField())
     p_hist = fields.ListField(fields.CharField())
     size0 = fields.ListField(fields.IntegerField())
     size1 = fields.ListField(fields.IntegerField())
-    ret_time = fields.DateTimeField()
+
