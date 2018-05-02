@@ -251,7 +251,7 @@ def add_header(image_string):
     :return: A base64 encoded string with a jpg header
     """
     image_string = str(image_string)[2:]
-    image_string_with_head = "data:image/jpeg;base64,"+str(image_string)
+    image_string_with_head = "data:image/jpeg;charset=utf-8;base64,"+str(image_string)
     return (image_string_with_head)
 
 
@@ -313,9 +313,9 @@ def main():
     imstring2 = encode_image_string('lion.jpg')
 
     zip_string = resave_image([imstring, imstring2], "tiff")
-    image_strings = unpack_zip(zip_string)
-    decode_image_string(image_strings[0])
-    post, pre, im_size, histopre, histopost = run_process(imstring, [0,0,1,0])
+    #image_strings = unpack_zip(zip_string)
+    #decode_image_string(image_strings[0])
+    #post, pre, im_size, histopre, histopost = run_process(imstring, [0,0,1,0])
 
 
 if __name__ == "__main__":
